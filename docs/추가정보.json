@@ -1,0 +1,88 @@
+{
+    "concept_details": {
+        "초1_네자리": {
+            "difficulty": "basic",
+            "expected_learning_time": "2차시",
+            "detailed_misconceptions": [
+                "학생들이 0의 역할을 과소평가하여, 예를 들어 402를 '4와 2'로 읽는 경우"
+            ],
+            "prerequisite_relationship": {
+                "prerequisites": [],
+                "subsequent": ["초1_덧셈", "초1_수의_구성"]
+            },
+            "related_concepts": ["숫자의 자리값"],
+            "variation_points": [
+                "여러 가지 수(예: 3,205, 1,047 등)를 제시하여 각 자리의 역할을 분석하는 문제",
+                "실생활 예제(예: 가격, 거리 등)로 자릿값 개념을 적용한 문제 변형"
+            ]
+        },
+        "초1_덧셈": {
+            "difficulty": "basic",
+            "expected_learning_time": "3차시",
+            "detailed_misconceptions": [
+                "받아올림 계산 시 올림된 값을 누락하거나, 자리 올림을 잘못 처리하는 오류",
+                "덧셈과 뺄셈의 역연산 관계를 충분히 이해하지 못하는 경우"
+            ],
+            "prerequisite_relationship": {
+                "prerequisites": ["초1_네자리"],
+                "subsequent": ["초1_뺄셈", "초1_덧셈응용"]
+            },
+            "related_concepts": ["초1_네자리"],
+            "variation_points": [
+                "문항에 다양한 수치(예: 23+17, 56+34 등)를 적용하여 문제를 변형",
+                "실생활 상황(예: 장난감 가격 합산 등)으로 덧셈 문제를 구성"
+            ]
+        },
+        "중1_소인수분해": {
+            "difficulty": "intermediate",
+            "expected_learning_time": "1차시",
+            "detailed_misconceptions": [
+                "합성수와 소수를 혼동하여 소인수분해를 잘못 수행하는 경우",
+                "소인수분해 과정에서 중간 단계(예: 소수로 나누는 단계)를 생략하는 오류"
+            ],
+            "prerequisite_relationship": {
+                "prerequisites": ["초등 수와 연산의 기초"],
+                "subsequent": ["중1_최대공약수_최소공배수"]
+            },
+            "related_concepts": ["약수와 배수"],
+            "variation_points": [
+                "다른 수(예: 48, 60, 84 등)의 소인수분해 문제로 변형",
+                "소인수분해 결과를 활용해 최대공약수 및 최소공배수를 구하는 연계 문제"
+            ]
+        },
+        "고대_지수함수": {
+            "difficulty": "advanced",
+            "expected_learning_time": "2차시",
+            "detailed_misconceptions": [
+                "지수함수의 비선형적 특성을 간과하여 선형 함수로 오해하는 경우",
+                "음의 지수에 대한 개념이 부족하여 음수 지수의 의미를 혼동하는 오류"
+            ],
+            "prerequisite_relationship": {
+                "prerequisites": ["고등 수학 기초"],
+                "subsequent": ["고대_로그함수"]
+            },
+            "related_concepts": ["고대_로그함수", "지수법칙"],
+            "variation_points": [
+                "밑이 다른 지수함수(예: y = 3^x, y = 0.5^x) 문제로 변형",
+                "실제 경제나 인구 증가 등의 응용 사례를 제시하여 지수함수 문제 생성"
+            ]
+        },
+        "고미적1_미분": {
+            "difficulty": "advanced",
+            "expected_learning_time": "2차시",
+            "detailed_misconceptions": [
+                "미분의 정의에서 극한 과정(Δx → 0)을 생략하고 평균 변화율과 혼동하는 오류",
+                "도함수와 원함수의 관계를 명확하게 이해하지 못하는 경우"
+            ],
+            "prerequisite_relationship": {
+                "prerequisites": ["기초 함수 개념", "기초 극한 개념"],
+                "subsequent": ["고미적1_적분", "고미적1_미분응용"]
+            },
+            "related_concepts": ["함수의 극한", "연쇄법칙"],
+            "variation_points": [
+                "다양한 함수(예: f(x)=x^2, f(x)=3x+2 등)에 대해 도함수를 구하는 문제로 변형",
+                "미분 결과를 활용한 그래프 기울기 분석 문제 생성"
+            ]
+        }
+    }
+}
