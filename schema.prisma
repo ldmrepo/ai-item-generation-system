@@ -1,0 +1,186 @@
+// This is your Prisma schema file
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model KnowledgeMap {
+  id           Int           @id @default(autoincrement())
+  subject      String        @db.VarChar(50)
+  grade        String        @db.VarChar(50)
+  unit         String        @db.VarChar(100)
+  version      String        @db.VarChar(20)
+  creationDate DateTime      @map("creation_date")
+  description  String?
+  conceptNodes ConceptNode[]
+
+  @@map("knowledge_map")
+}
+
+model ConceptNode {
+  id                String             @id @db.VarChar(20)
+  mapId             Int                @map("map_id")
+  conceptName       String             @map("concept_name") @db.VarChar(100)
+  definition        String
+  difficultyLevel   String             @map("difficulty_level") @db.VarChar(20)
+  learningTime      Int                @map("learning_time")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @default(now()) @map("updated_at")
+  knowledgeMap      KnowledgeMap       @relation(fields: [mapId], references: [id])
+  curriculumMappings CurriculumMapping[]
+  sourceConnections NodeConnection[]   @relation("SourceNode")
+  targetConnections NodeConnection[]   @relation("TargetNode")
+  misconceptions    Misconception[]
+  seedItems         SeedItem[]
+  generatedItems    GeneratedItem[]
+
+  @@unique([mapId, conceptName])
+  @@map("concept_node")
+}
+
+model CurriculumMapping {
+  id                 Int        @id @default(autoincrement())
+  nodeId             String     @map("node_id") @db.VarChar(20)
+  educationSystem    String     @map("education_system") @db.VarChar(100)
+  grade              String     @db.VarChar(50)
+  unit               String     @db.VarChar(100)
+  achievementStandard String     @map("achievement_standard")
+  createdAt          DateTime   @default(now()) @map("created_at")
+  conceptNode        ConceptNode @relation(fields: [nodeId], references: [id])
+
+  @@map("curriculum_mapping")
+}
+
+model NodeConnection {
+  id             Int         @id @default(autoincrement())
+  sourceNodeId   String      @map("source_node_id") @db.VarChar(20)
+  targetNodeId   String      @map("target_node_id") @db.VarChar(20)
+  connectionType String      @map("connection_type") @db.VarChar(20)
+  strength       String      @db.VarChar(20)
+  createdAt      DateTime    @default(now()) @map("created_at")
+  sourceNode     ConceptNode @relation("SourceNode", fields: [sourceNodeId], references: [id])
+  targetNode     ConceptNode @relation("TargetNode", fields: [targetNodeId], references: [id])
+
+  @@unique([sourceNodeId, targetNodeId])
+  @@map("node_connection")
+}
+
+model Misconception {
+  id          Int         @id @default(autoincrement())
+  nodeId      String      @map("node_id") @db.VarChar(20)
+  description String
+  createdAt   DateTime    @default(now()) @map("created_at")
+  conceptNode ConceptNode @relation(fields: [nodeId], references: [id])
+
+  @@map("misconception")
+}
+
+model SeedItem {
+  id              String           @id @db.VarChar(50)
+  nodeId          String           @map("node_id") @db.VarChar(20)
+  itemType        String           @map("item_type") @db.VarChar(50)
+  difficulty      String           @db.VarChar(20)
+  content         String
+  answer          String
+  explanation     String
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @default(now()) @map("updated_at")
+  conceptNode     ConceptNode      @relation(fields: [nodeId], references: [id])
+  variationPoints VariationPoint[]
+  generatedItems  GeneratedItem[]
+
+  @@map("seed_item")
+}
+
+model VariationPoint {
+  id         Int      @id @default(autoincrement())
+  seedItemId String   @map("seed_item_id") @db.VarChar(50)
+  pointName  String   @map("point_name") @db.VarChar(100)
+  createdAt  DateTime @default(now()) @map("created_at")
+  seedItem   SeedItem @relation(fields: [seedItemId], references: [id])
+
+  @@unique([seedItemId, pointName])
+  @@map("variation_point")
+}
+
+model GeneratedItem {
+  id                 String               @id @db.VarChar(50)
+  seedItemId         String?              @map("seed_item_id") @db.VarChar(50)
+  nodeId             String               @map("node_id") @db.VarChar(20)
+  itemType           String               @map("item_type") @db.VarChar(50)
+  difficulty         String               @db.VarChar(20)
+  content            String
+  answer             String
+  explanation        String
+  generationTimestamp DateTime              @default(now()) @map("generation_timestamp")
+  approved           Boolean               @default(false)
+  qualityScore       Float?                @map("quality_score") @db.Decimal(3, 2)
+  conceptNode        ConceptNode           @relation(fields: [nodeId], references: [id])
+  seedItem           SeedItem?             @relation(fields: [seedItemId], references: [id])
+  generationMappings GenerationItemMapping[]
+  assessments        ItemAssessment[]
+
+  @@map("generated_item")
+}
+
+model GenerationHistory {
+  id                Int                    @id @default(autoincrement())
+  generationRequestId String                 @map("generation_request_id") @db.VarChar(50)
+  userId            String?                @map("user_id") @db.VarChar(50)
+  requestParams     Json                   @map("request_params")
+  itemsRequested    Int                    @map("items_requested")
+  itemsGenerated    Int                    @map("items_generated")
+  startTime         DateTime               @map("start_time")
+  endTime           DateTime?              @map("end_time")
+  status            String                 @db.VarChar(20)
+  createdAt         DateTime               @default(now()) @map("created_at")
+  itemMappings      GenerationItemMapping[]
+
+  @@map("generation_history")
+}
+
+model GenerationItemMapping {
+  id                  Int              @id @default(autoincrement())
+  generationHistoryId Int              @map("generation_history_id")
+  generatedItemId     String           @map("generated_item_id") @db.VarChar(50)
+  createdAt           DateTime         @default(now()) @map("created_at")
+  generationHistory   GenerationHistory @relation(fields: [generationHistoryId], references: [id])
+  generatedItem       GeneratedItem     @relation(fields: [generatedItemId], references: [id])
+
+  @@unique([generationHistoryId, generatedItemId])
+  @@map("generation_item_mapping")
+}
+
+model AssessmentCriteria {
+  id                Int             @id @default(autoincrement())
+  name              String          @unique @db.VarChar(50)
+  description       String
+  weight            Float           @db.Decimal(3, 2)
+  evaluationMethod  String          @map("evaluation_method") @db.VarChar(100)
+  passingThreshold  Float           @map("passing_threshold") @db.Decimal(3, 2)
+  createdAt         DateTime        @default(now()) @map("created_at")
+  itemAssessments   ItemAssessment[]
+
+  @@map("assessment_criteria")
+}
+
+model ItemAssessment {
+  id               Int                @id @default(autoincrement())
+  generatedItemId  String             @map("generated_item_id") @db.VarChar(50)
+  criteriaId       Int                @map("criteria_id")
+  score            Float              @db.Decimal(3, 2)
+  feedback         String?
+  assessedBy       String?            @map("assessed_by") @db.VarChar(50)
+  assessedAt       DateTime           @map("assessed_at")
+  generatedItem    GeneratedItem      @relation(fields: [generatedItemId], references: [id])
+  criteria         AssessmentCriteria @relation(fields: [criteriaId], references: [id])
+
+  @@unique([generatedItemId, criteriaId])
+  @@map("item_assessment")
+}
