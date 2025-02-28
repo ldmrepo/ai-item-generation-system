@@ -1,5 +1,7 @@
 아래는 제시된 **가. 지필평가 예시 평가 도구**(문항 개요_B수준)에서 볼 수 있는 정보를 기반으로, **평가 도구(EvaluationTool)**에 필요한 요소를 모두 담아낸 JSON 데이터 구조 예시입니다.
 
+![image](https://github.com/user-attachments/assets/3776c070-1021-4af1-b864-01f9812ca500)
+
 ---
 
 ## 1. **평가 도구(EvaluationTool) 데이터 구조 정의**
