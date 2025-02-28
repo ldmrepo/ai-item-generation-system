@@ -97,6 +97,11 @@
 }
 ```
 
+### 예시 문항
+
+![image](https://github.com/user-attachments/assets/6840abb0-9df3-43e7-bc5e-be3a49ab8826)
+
+
 ---
 
 ### **정리**
