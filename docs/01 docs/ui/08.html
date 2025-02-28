@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>교육과정 기반 학습 분석 플랫폼</title>
+        <style>
+            :root {
+                --primary: #3f51b5;
+                --primary-light: #757de8;
+                --primary-dark: #002984;
+                --secondary: #00bcd4;
+                --secondary-light: #62efff;
+                --secondary-dark: #008ba3;
+                --accent: #ff4081;
+                --success: #4caf50;
+                --warning: #ff9800;
+                --danger: #f44336;
+                --light: #f5f5f5;
+                --dark: #212121;
+                --gray: #757575;
+                --white: #ffffff;
+                --border-radius: 0.5rem;
+                --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                --transition: all 0.3s ease;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Noto Sans KR", sans-serif;
+                line-height: 1.6;
+                color: var(--dark);
+                background-color: #f0f2f5;
+            }
+
+            header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary-dark)
+                );
+                color: white;
+                padding: 1.5rem 0;
+                box-shadow: var(--box-shadow);
+            }
+
+            .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 1.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .app-title {
+                font-size: 1.8rem;
+                font-weight: 700;
+            }
+
+            .main-menu {
+                display: flex;
+                gap: 2rem;
+            }
+
+            .menu-item {
+                color: rgba(255, 255, 255, 0.9);
+                text-decoration: none;
+                font-weight: 500;
+                transition: var(--transition);
+            }
+
+            .menu-item:hover {
+                color: white;
+            }
+
+            .user-profile {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: var(--primary-light);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+            }
+
+            main {
+                max-width: 1200px;
+                margin: 2rem auto;
+                padding: 0 1.5rem;
+            }
+
+            .dashboard {
+                display: grid;
+                grid-template-columns: 280px 1fr;
+                gap: 2rem;
+            }
+
+            .card {
+                background-color: white;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                overflow: hidden;
+                margin-bottom: 1.5rem;
+            }
+
+            .card-header {
+                padding: 1.5rem;
+                border-bottom: 1px solid #e0e0e0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .card-tools {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .btn {
+                display: inline-block;
+                padding: 0.6rem 1.2rem;
+                background-color: var(--primary);
+                color: white;
+                border: none;
+                border-radius: var(--border-radius);
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 0.9rem;
+                text-align: center;
+                text-decoration: none;
+            }
+
+            .btn:hover {
+                background-color: var(--primary-dark);
+            }
+
+            .btn-outline {
+                background-color: transparent;
+                border: 1px solid var(--primary);
+                color: var(--primary);
+            }
+
+            .btn-outline:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .btn-sm {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .nav-menu {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .nav-item {
+                padding: 1rem 1.5rem;
+                color: var(--dark);
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+                transition: var(--transition);
+                border-left: 3px solid transparent;
+            }
+
+            .nav-item:hover,
+            .nav-item.active {
+                background-color: var(--light);
+                color: var(--primary);
+                border-left-color: var(--primary);
+            }
+
+            .nav-icon {
+                font-size: 1.2rem;
+                width: 24px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .filter-section {
+                padding: 1.5rem;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .filter-title {
+                font-weight: 600;
+                margin-bottom: 1rem;
+                color: var(--primary);
+            }
+
+            .filter-group {
+                margin-bottom: 1rem;
+            }
+
+            .filter-label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+                font-size: 0.9rem;
+            }
+
+            .filter-select {
+                width: 100%;
+                padding: 0.5rem;
+                border: 1px solid #e0e0e0;
+                border-radius: var(--border-radius);
+                font-size: 0.9rem;
+            }
+
+            .progress-item {
+                margin-bottom: 1rem;
+            }
+
+            .progress-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 0.5rem;
+            }
+
+            .progress-domain {
+                font-weight: 500;
+            }
+
+            .progress-percentage {
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .progress-bar {
+                height: 8px;
+                background-color: #e0e0e0;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background-color: var(--primary);
+            }
+
+            .progress-fill.high {
+                background-color: var(--success);
+            }
+
+            .progress-fill.medium {
+                background-color: var(--warning);
+            }
+
+            .progress-fill.low {
+                background-color: var(--danger);
+            }
+
+            .tabs {
+                display: flex;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .tab {
+                padding: 1rem 1.5rem;
+                cursor: pointer;
+                transition: var(--transition);
+                border-bottom: 3px solid transparent;
+            }
+
+            .tab.active {
+                border-bottom-color: var(--primary);
+                color: var(--primary);
+                font-weight: 500;
+            }
+
+            .tab:hover {
+                background-color: var(--light);
+            }
+
+            .chart-container {
+                height: 300px;
+                position: relative;
+            }
+
+            .performance-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .performance-table th,
+            .performance-table td {
+                padding: 1rem;
+                text-align: left;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .performance-table th {
+                font-weight: 600;
+                color: var(--primary);
+                background-color: var(--light);
+            }
+
+            .performance-table tr:hover {
+                background-color: rgba(63, 81, 181, 0.05);
+            }
+
+            .standard-id {
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .student-name {
+                font-weight: 500;
+            }
+
+            .badge {
+                display: inline-block;
+                padding: 0.2rem 0.6rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 500;
+            }
+
+            .badge-primary {
+                background-color: rgba(63, 81, 181, 0.1);
+                color: var(--primary);
+            }
+
+            .badge-success {
+                background-color: rgba(76, 175, 80, 0.1);
+                color: var(--success);
+            }
+
+            .badge-warning {
+                background-color: rgba(255, 152, 0, 0.1);
+                color: var(--warning);
+            }
+
+            .badge-danger {
+                background-color: rgba(244, 67, 54, 0.1);
+                color: var(--danger);
+            }
+
+            .badge-accent {
+                background-color: rgba(255, 64, 129, 0.1);
+                color: var(--accent);
+            }
+
+            .heatmap {
+                display: flex;
+                flex-direction: column;
+                gap: 1px;
+                background-color: #e0e0e0;
+                border-radius: var(--border-radius);
+                overflow: hidden;
+            }
+
+            .heatmap-row {
+                display: flex;
+                gap: 1px;
+            }
+
+            .heatmap-cell {
+                flex: 1;
+                padding: 1rem 0.5rem;
+                text-align: center;
+                font-weight: 500;
+                background-color: white;
+            }
+
+            .heatmap-cell.header {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .heatmap-cell.row-header {
+                flex: 0 0 150px;
+                text-align: left;
+                padding-left: 1rem;
+                background-color: var(--light);
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .level-90-100 {
+                background-color: rgba(76, 175, 80, 0.9);
+                color: white;
+            }
+
+            .level-80-90 {
+                background-color: rgba(76, 175, 80, 0.7);
+                color: white;
+            }
+
+            .level-70-80 {
+                background-color: rgba(76, 175, 80, 0.5);
+                color: white;
+            }
+
+            .level-60-70 {
+                background-color: rgba(255, 152, 0, 0.7);
+                color: white;
+            }
+
+            .level-50-60 {
+                background-color: rgba(255, 152, 0, 0.5);
+                color: black;
+            }
+
+            .level-below-50 {
+                background-color: rgba(244, 67, 54, 0.7);
+                color: white;
+            }
+
+            .recommendations {
+                margin-top: 1rem;
+            }
+
+            .recommendation-item {
+                padding: 1rem;
+                border-left: 4px solid var(--primary);
+                background-color: rgba(63, 81, 181, 0.05);
+                border-radius: 0 var(--border-radius) var(--border-radius) 0;
+                margin-bottom: 1rem;
+            }
+
+            .recommendation-title {
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                color: var(--primary);
+            }
+
+            .summary-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .summary-card {
+                background-color: white;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                padding: 1.5rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .summary-icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background-color: rgba(63, 81, 181, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                margin-bottom: 0.8rem;
+                color: var(--primary);
+            }
+
+            .summary-label {
+                color: var(--gray);
+                font-size: 0.9rem;
+            }
+
+            .summary-value {
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: var(--primary);
+            }
+
+            .summary-change {
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+            .change-up {
+                color: var(--success);
+            }
+
+            .change-down {
+                color: var(--danger);
+            }
+
+            .student-list {
+                max-height: 600px;
+                overflow-y: auto;
+            }
+
+            .student-item {
+                padding: 1rem;
+                border-bottom: 1px solid #e0e0e0;
+                cursor: pointer;
+                transition: var(--transition);
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .student-item:hover {
+                background-color: rgba(63, 81, 181, 0.05);
+            }
+
+            .student-item.selected {
+                background-color: rgba(63, 81, 181, 0.1);
+                border-left: 3px solid var(--primary);
+            }
+
+            .student-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: var(--light);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .student-details {
+                flex: 1;
+            }
+
+            .student-info {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .student-performance {
+                font-size: 0.85rem;
+                display: flex;
+                justify-content: space-between;
+                margin-top: 0.3rem;
+            }
+
+            .student-score {
+                font-weight: 600;
+            }
+
+            .score-high {
+                color: var(--success);
+            }
+
+            .score-medium {
+                color: var(--warning);
+            }
+
+            .score-low {
+                color: var(--danger);
+            }
+
+            .trend-indicator {
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+                font-weight: 500;
+                font-size: 0.85rem;
+            }
+
+            .trend-up {
+                color: var(--success);
+            }
+
+            .trend-down {
+                color: var(--danger);
+            }
+
+            .trend-neutral {
+                color: var(--gray);
+            }
+
+            .search-box {
+                padding: 1rem;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .search-input {
+                width: 100%;
+                padding: 0.6rem;
+                border: 1px solid #e0e0e0;
+                border-radius: var(--border-radius);
+                font-size: 0.9rem;
+            }
+
+            .concept-map {
+                margin-top: 1.5rem;
+                height: 400px;
+                border: 1px solid #e0e0e0;
+                border-radius: var(--border-radius);
+                background-color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .standard-details {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .standard-info {
+                display: flex;
+                gap: 1rem;
+                padding: 1rem;
+                background-color: var(--light);
+                border-radius: var(--border-radius);
+            }
+
+            .standard-icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background-color: rgba(63, 81, 181, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                color: var(--primary);
+            }
+
+            .standard-content {
+                flex: 1;
+            }
+
+            .standard-title {
+                font-weight: 600;
+                margin-bottom: 0.3rem;
+                color: var(--primary);
+            }
+
+            .standard-description {
+                font-size: 0.95rem;
+            }
+
+            .related-standards {
+                margin-top: 1rem;
+            }
+
+            .related-title {
+                font-weight: 600;
+                margin-bottom: 0.8rem;
+                color: var(--primary);
+            }
+
+            .related-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .related-item {
+                padding: 0.4rem 0.8rem;
+                background-color: rgba(63, 81, 181, 0.1);
+                border-radius: 20px;
+                font-size: 0.85rem;
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .related-item:hover {
+                background-color: rgba(63, 81, 181, 0.2);
+            }
+
+            @media (max-width: 992px) {
+                .dashboard {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="header-content">
+                <h1 class="app-title">교육과정 기반 학습 분석 플랫폼</h1>
+                <div class="main-menu">
+                    <a href="#" class="menu-item">개인 대시보드</a>
+                    <a href="#" class="menu-item">학급 분석</a>
+                    <a href="#" class="menu-item">성취기준 분석</a>
+                    <a href="#" class="menu-item">성장 추적</a>
+                    <a href="#" class="menu-item">보고서</a>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">KM</div>
+                </div>
+            </div>
+        </header>
+        <main>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-icon">📊</div>
+                    <div class="summary-label">학급 평균 성취도</div>
+                    <div class="summary-value">78%</div>
+                    <div class="summary-change change-up">
+                        <span>↑ 3.5%</span> 지난 평가 대비
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">🎯</div>
+                    <div class="summary-label">목표 달성 학생 비율</div>
+                    <div class="summary-value">65%</div>
+                    <div class="summary-change change-up">
+                        <span>↑ 5.2%</span> 지난 평가 대비
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">🔍</div>
+                    <div class="summary-label">가장 낮은 성취 영역</div>
+                    <div class="summary-value">자료와 가능성</div>
+                    <div class="summary-change change-down">
+                        <span>↓ 2.8%</span> 지난 평가 대비
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">👨‍👩‍👧‍👦</div>
+                    <div class="summary-label">학습 격차</div>
+                    <div class="summary-value">28%</div>
+                    <div class="summary-change change-down">
+                        <span>↓ 1.5%</span> 지난 평가 대비
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard">
+                <!-- 좌측 사이드바 -->
+                <div class="sidebar">
+                    <div class="card">
+                        <div class="nav-menu">
+                            <a href="#" class="nav-item active">
+                                <span class="nav-icon">📊</span>
+                                <span>학급 현황</span>
+                            </a>
+                            <a href="#" class="nav-item">
+                                <span class="nav-icon">👤</span>
+                                <span>학생별 분석</span>
+                            </a>
+                            <a href="#" class="nav-item">
+                                <span class="nav-icon">📝</span>
+                                <span>성취기준별 분석</span>
+                            </a>
+                            <a href="#" class="nav-item">
+                                <span class="nav-icon">📈</span>
+                                <span>성장 추이</span>
+                            </a>
+                            <a href="#" class="nav-item">
+                                <span class="nav-icon">🎯</span>
+                                <span>개선 활동</span>
+                            </a>
+                            <a href="#" class="nav-item">
+                                <span class="nav-icon">📋</span>
+                                <span>보고서</span>
+                            </a>
+                            <a href="#" class="nav-item">
+                                <span class="nav-icon">⚙️</span>
+                                <span>설정</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="filter-section">
+                            <div class="filter-title">분석 필터</div>
+                            <div class="filter-group">
+                                <label class="filter-label">평가 기간</label>
+                                <select class="filter-select">
+                                    <option>2025년 2월</option>
+                                    <option>2025년 1월</option>
+                                    <option>2024년 12월</option>
+                                    <option>2024년 11월</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">학년/학급</label>
+                                <select class="filter-select">
+                                    <option>2학년 3반</option>
+                                    <option>2학년 전체</option>
+                                    <option>1학년 전체</option>
+                                    <option>3학년 전체</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label"
+                                    >교육과정 영역</label
+                                >
+                                <select class="filter-select">
+                                    <option>모든 영역</option>
+                                    <option>수와 연산</option>
+                                    <option>변화와 관계</option>
+                                    <option>도형과 측정</option>
+                                    <option>자료와 가능성</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">성취기준</label>
+                                <select class="filter-select">
+                                    <option>모든 성취기준</option>
+                                    <option>2수01-01</option>
+                                    <option>2수01-02</option>
+                                    <option>2수01-03</option>
+                                    <option>2수02-01</option>
+                                    <option>2수03-01</option>
+                                    <option>2수04-01</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">학생 그룹</label>
+                                <select class="filter-select">
+                                    <option>전체 학생</option>
+                                    <option>상위 25%</option>
+                                    <option>중위 50%</option>
+                                    <option>하위 25%</option>
+                                    <option>학습 지원 필요 그룹</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-sm" style="width: 100%">
+                                적용
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- 우측 콘텐츠 영역 -->
+                <div class="content">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">교육과정 영역별 성취도</div>
+                            <div class="card-tools">
+                                <button class="btn btn-sm btn-outline">
+                                    내보내기
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <img
+                                    src="/api/placeholder/800/300"
+                                    alt="영역별 성취도 차트"
+                                />
+                            </div>
+                            <div
+                                class="progress-overview"
+                                style="margin-top: 1.5rem"
+                            >
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <div class="progress-domain">
+                                            수와 연산
+                                        </div>
+                                        <div class="progress-percentage">
+                                            86%
+                                        </div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div
+                                            class="progress-fill high"
+                                            style="width: 86%"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <div class="progress-domain">
+                                            변화와 관계
+                                        </div>
+                                        <div class="progress-percentage">
+                                            78%
+                                        </div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div
+                                            class="progress-fill high"
+                                            style="width: 78%"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <div class="progress-domain">
+                                            도형과 측정
+                                        </div>
+                                        <div class="progress-percentage">
+                                            72%
+                                        </div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div
+                                            class="progress-fill medium"
+                                            style="width: 72%"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <div class="progress-domain">
+                                            자료와 가능성
+                                        </div>
+                                        <div class="progress-percentage">
+                                            68%
+                                        </div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div
+                                            class="progress-fill medium"
+                                            style="width: 68%"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">성취기준별 학급 성취도</div>
+                            <div class="card-tools">
+                                <button class="btn btn-sm btn-outline">
+                                    내보내기
+                                </button>
+                            </div>
+                        </div>
+                        <div class="tabs">
+                            <div class="tab active">성취도 분포</div>
+                            <div class="tab">취약 영역</div>
+                            <div class="tab">개념 연계</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="heatmap">
+                                <!-- 헤더 행 -->
+                                <div class="heatmap-row">
+                                    <div class="heatmap-cell row-header">
+                                        성취기준
+                                    </div>
+                                    <div class="heatmap-cell header">
+                                        상위 25%
+                                    </div>
+                                    <div class="heatmap-cell header">
+                                        중위 50%
+                                    </div>
+                                    <div class="heatmap-cell header">
+                                        하위 25%
+                                    </div>
+                                    <div class="heatmap-cell header">
+                                        전체 평균
+                                    </div>
+                                </div>
+                                <!-- 수와 연산 영역 예시 -->
+                                <div class="heatmap-row">
+                                    <div class="heatmap-cell row-header">
+                                        2수01-01
+                                    </div>
+                                    <div class="heatmap-cell level-90-100">
+                                        95%
+                                    </div>
+                                    <div class="heatmap-cell level-80-90">
+                                        88%
+                                    </div>
+                                    <div class="heatmap-cell level-70-80">
+                                        76%
+                                    </div>
+                                    <div class="heatmap-cell level-80-90">
+                                        86%
+                                    </div>
+                                </div>
+                                <div class="heatmap-row">
+                                    <div class="heatmap-cell row-header">
+                                        2수01-02
+                                    </div>
+                                    <div class="heatmap-cell level-90-100">
+                                        92%
+                                    </div>
+                                    <div class="heatmap-cell level-80-90">
+                                        85%
+                                    </div>
+                                    <div class="heatmap-cell level-70-80">
+                                        73%
+                                    </div>
+                                    <div class="heatmap-cell level-80-90">
+                                        83%
+                                    </div>
+                                </div>
+                                <div class="heatmap-row">
+                                    <div class="heatmap-cell row-header">
+                                        2수01-03
+                                    </div>
+                                    <div class="heatmap-cell level-90-100">
+                                        91%
+                                    </div>
+                                    <div class="heatmap-cell level-80-90">
+                                        87%
+                                    </div>
+                                    <div class="heatmap-cell level-70-80">
+                                        75%
+                                    </div>
+                                    <div class="heatmap-cell level-80-90">
+                                        84%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

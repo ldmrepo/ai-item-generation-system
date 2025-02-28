@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>수학 지식맵 시각화 도구</title>
+        <style>
+            :root {
+                --primary: #3a86ff;
+                --primary-light: #4895ef;
+                --primary-dark: #3a0ca3;
+                --secondary: #4cc9f0;
+                --accent: #7209b7;
+                --success: #06d6a0;
+                --warning: #ffbe0b;
+                --danger: #ef476f;
+                --light: #f8f9fa;
+                --dark: #212529;
+                --gray: #6c757d;
+                --white: #ffffff;
+                --border-radius: 0.5rem;
+                --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+                --transition: all 0.3s ease;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Noto Sans KR", sans-serif;
+                line-height: 1.6;
+                color: var(--dark);
+                background-color: #f5f7fb;
+            }
+
+            header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary-dark)
+                );
+                color: white;
+                padding: 1.5rem 0;
+                box-shadow: var(--box-shadow);
+            }
+
+            .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 1.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .app-title {
+                font-size: 1.8rem;
+                font-weight: 700;
+            }
+
+            main {
+                max-width: 1200px;
+                margin: 2rem auto;
+                padding: 0 1.5rem;
+            }
+
+            .container {
+                display: grid;
+                grid-template-columns: 320px 1fr;
+                gap: 2rem;
+            }
+
+            .panel {
+                background-color: white;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .panel-title {
+                font-size: 1.3rem;
+                font-weight: 600;
+                margin-bottom: 1.5rem;
+                color: var(--primary);
+                border-bottom: 2px solid var(--secondary);
+                padding-bottom: 0.5rem;
+            }
+
+            .form-group {
+                margin-bottom: 1.2rem;
+            }
+
+            .form-label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+            }
+
+            .form-select {
+                width: 100%;
+                padding: 0.6rem;
+                border: 1px solid #ced4da;
+                border-radius: var(--border-radius);
+                font-size: 0.95rem;
+            }
+
+            .btn {
+                display: inline-block;
+                padding: 0.6rem 1.2rem;
+                background-color: var(--primary);
+                color: white;
+                border: none;
+                border-radius: var(--border-radius);
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 0.95rem;
+                text-align: center;
+                text-decoration: none;
+            }
+
+            .btn:hover {
+                background-color: var(--primary-dark);
+            }
+
+            .btn-outline {
+                background-color: transparent;
+                border: 1px solid var(--primary);
+                color: var(--primary);
+            }
+
+            .btn-outline:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .btn-block {
+                display: block;
+                width: 100%;
+            }
+
+            .btn-sm {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .search-box {
+                margin-bottom: 1.5rem;
+            }
+
+            .search-input {
+                width: 100%;
+                padding: 0.6rem;
+                border: 1px solid #ced4da;
+                border-radius: var(--border-radius);
+                font-size: 0.95rem;
+            }
+
+            .legend {
+                margin-top: 2rem;
+            }
+
+            .legend-items {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.8rem;
+            }
+
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .legend-color {
+                width: 16px;
+                height: 16px;
+                border-radius: 4px;
+            }
+
+            .color-domain {
+                background-color: var(--primary);
+            }
+
+            .color-core-idea {
+                background-color: var(--accent);
+            }
+
+            .color-content {
+                background-color: var(--secondary);
+            }
+
+            .color-standard {
+                background-color: var(--success);
+            }
+
+            .color-term {
+                background-color: var(--warning);
+            }
+
+            .color-completed {
+                background-color: var(--success);
+            }
+
+            .color-in-progress {
+                background-color: var(--warning);
+            }
+
+            .color-not-started {
+                background-color: var(--gray);
+            }
+
+            .visualization-panel {
+                position: relative;
+            }
+
+            .viz-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+
+            .viz-tools {
+                display: flex;
+                gap: 0.8rem;
+            }
+
+            .map-container {
+                height: 600px;
+                background-color: white;
+                border-radius: var(--border-radius);
+                overflow: hidden;
+                position: relative;
+            }
+
+            .map-svg {
+                width: 100%;
+                height: 100%;
+                background-color: #f8f9fa;
+            }
+
+            .node-list {
+                margin-top: 1.5rem;
+                max-height: 400px;
+                overflow-y: auto;
+            }
+
+            .node-item {
+                padding: 0.8rem;
+                border-bottom: 1px solid #eaecef;
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .node-item:hover {
+                background-color: rgba(67, 97, 238, 0.1);
+            }
+
+            .node-item.active {
+                background-color: rgba(67, 97, 238, 0.1);
+                border-left: 3px solid var(--primary);
+            }
+
+            .node-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 0.3rem;
+            }
+
+            .node-id {
+                font-weight: 600;
+                color: var(--primary);
+                font-size: 0.9rem;
+            }
+
+            .node-type {
+                font-size: 0.8rem;
+                color: var(--gray);
+                padding: 0.2rem 0.4rem;
+                background-color: rgba(108, 117, 125, 0.1);
+                border-radius: 12px;
+            }
+
+            .node-domain {
+                color: var(--primary);
+            }
+
+            .node-core-idea {
+                color: var(--accent);
+            }
+
+            .node-content {
+                color: var(--secondary);
+            }
+
+            .node-standard {
+                color: var(--success);
+            }
+
+            .node-term {
+                color: var(--warning);
+            }
+
+            .node-title {
+                font-weight: 500;
+                margin-bottom: 0.3rem;
+            }
+
+            .node-content-text {
+                font-size: 0.9rem;
+                color: var(--gray);
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .detail-panel {
+                position: absolute;
+                top: 80px;
+                right: 20px;
+                width: 300px;
+                background-color: white;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                padding: 1.5rem;
+                z-index: 100;
+                display: none;
+            }
+
+            .detail-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+
+            .detail-title {
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .close-btn {
+                cursor: pointer;
+                color: var(--gray);
+                transition: var(--transition);
+            }
+
+            .close-btn:hover {
+                color: var(--danger);
+            }
+
+            .detail-body {
+                margin-bottom: 1.5rem;
+            }
+
+            .detail-label {
+                font-weight: 500;
+                margin-bottom: 0.3rem;
+                color: var(--gray);
+            }
+
+            .detail-content {
+                margin-bottom: 1rem;
+            }
+
+            .detail-relations {
+                margin-top: 1.5rem;
+            }
+
+            .relation-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .relation-item {
+                padding: 0.5rem;
+                background-color: rgba(67, 97, 238, 0.05);
+                border-radius: var(--border-radius);
+                font-size: 0.9rem;
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .relation-item:hover {
+                background-color: rgba(67, 97, 238, 0.1);
+            }
+
+            .filter-options {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .filter-option {
+                padding: 0.4rem 0.8rem;
+                background-color: rgba(67, 97, 238, 0.05);
+                border-radius: 20px;
+                font-size: 0.9rem;
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .filter-option:hover,
+            .filter-option.active {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .zoom-controls {
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                z-index: 10;
+            }
+
+            .zoom-btn {
+                width: 40px;
+                height: 40px;
+                background-color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: var(--box-shadow);
+                transition: var(--transition);
+                border: none;
+                font-size: 1.2rem;
+                color: var(--primary);
+            }
+
+            .zoom-btn:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .tabs {
+                display: flex;
+                margin-bottom: 1.5rem;
+                border-bottom: 1px solid #ced4da;
+            }
+
+            .tab {
+                padding: 0.8rem 1.2rem;
+                cursor: pointer;
+                transition: var(--transition);
+                border-bottom: 3px solid transparent;
+            }
+
+            .tab.active {
+                border-bottom-color: var(--primary);
+                color: var(--primary);
+                font-weight: 500;
+            }
+
+            .tab:hover {
+                background-color: rgba(67, 97, 238, 0.1);
+            }
+
+            @media (max-width: 992px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+
+                .detail-panel {
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 90%;
+                    max-width: 400px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="header-content">
+                <h1 class="app-title">수학 지식맵 시각화 도구</h1>
+                <div>
+                    <button class="btn btn-outline">저장하기</button>
+                    <button class="btn">내보내기</button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="container">
+                <!-- 좌측 제어 패널 -->
+                <div class="sidebar">
+                    <div class="panel">
+                        <div class="panel-title">지식맵 설정</div>
+
+                        <div class="form-group">
+                            <label class="form-label">학교급 / 학년군</label>
+                            <select class="form-select">
+                                <option>모든 학년군</option>
+                                <option>초등학교 1-2학년</option>
+                                <option selected>초등학교 3-4학년</option>
+                                <option>초등학교 5-6학년</option>
+                                <option>중학교 1-3학년</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">교육과정 영역</label>
+                            <select class="form-select">
+                                <option>모든 영역</option>
+                                <option selected>수와 연산</option>
+                                <option>변화와 관계</option>
+                                <option>도형과 측정</option>
+                                <option>자료와 가능성</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">지식맵 보기 방식</label>
+                            <select class="form-select">
+                                <option>계층형 트리</option>
+                                <option selected>네트워크 그래프</option>
+                                <option>방사형 배치</option>
+                                <option>위계 배치</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">표시할 요소</label>
+                            <div class="filter-options">
+                                <div class="filter-option active">영역</div>
+                                <div class="filter-option active">
+                                    핵심 아이디어
+                                </div>
+                                <div class="filter-option active">
+                                    내용 요소
+                                </div>
+                                <div class="filter-option active">성취기준</div>
+                                <div class="filter-option">용어 및 기호</div>
+                                <div class="filter-option">교과 역량</div>
+                            </div>
+                        </div>
+
+                        <div class="search-box">
+                            <input
+                                type="text"
+                                class="search-input"
+                                placeholder="개념, 성취기준, 용어 검색..."
+                            />
+                        </div>
+
+                        <button class="btn btn-block">지식맵 그리기</button>
+
+                        <div class="legend">
+                            <div class="form-label">범례</div>
+                            <div class="legend-items">
+                                <div class="legend-item">
+                                    <div
+                                        class="legend-color color-domain"
+                                    ></div>
+                                    <div>영역</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div
+                                        class="legend-color color-core-idea"
+                                    ></div>
+                                    <div>핵심 아이디어</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div
+                                        class="legend-color color-content"
+                                    ></div>
+                                    <div>내용 요소</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div
+                                        class="legend-color color-standard"
+                                    ></div>
+                                    <div>성취기준</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color color-term"></div>
+                                    <div>용어 및 기호</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div
+                                        class="legend-color color-completed"
+                                    ></div>
+                                    <div>습득 완료</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div
+                                        class="legend-color color-in-progress"
+                                    ></div>
+                                    <div>학습 중</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div
+                                        class="legend-color color-not-started"
+                                    ></div>
+                                    <div>미학습</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-title">관련 요소 탐색</div>
+                        <div class="tabs">
+                            <div class="tab active">노드 목록</div>
+                            <div class="tab">학습 경로</div>
+                        </div>
+                        <div class="node-list">
+                            <div class="node-item active">
+                                <div class="node-header">
+                                    <div class="node-id">D01</div>
+                                    <div class="node-type node-domain">
+                                        영역
+                                    </div>
+                                </div>
+                                <div class="node-title">수와 연산</div>
+                                <div class="node-content-text">
+                                    수와 연산 영역은 초·중학교에서 다루는 수학적
+                                    대상과 기본적인 개념을 드러내는 영역으로...
+                                </div>
+                            </div>
+                            <div class="node-item">
+                                <div class="node-header">
+                                    <div class="node-id">CI0101</div>
+                                    <div class="node-type node-core-idea">
+                                        핵심 아이디어
+                                    </div>
+                                </div>
+                                <div class="node-title">수 표현과 확장</div>
+                                <div class="node-content-text">
+                                    사물의 양은 자연수, 분수, 소수 등으로
+                                    표현되며, 수는 자연수에서 정수, 유리수,
+                                    실수로 확장된다.
+                                </div>
+                            </div>
+                            <div class="node-item">
+                                <div class="node-header">
+                                    <div class="node-id">CI0102</div>
+                                    <div class="node-type node-core-idea">
+                                        핵심 아이디어
+                                    </div>
+                                </div>
+                                <div class="node-title">연산의 성질</div>
+                                <div class="node-content-text">
+                                    사칙계산은 자연수에 대해 정의되며 정수,
+                                    유리수, 실수의 사칙계산으로 확장되고 이때
+                                    연산의 성질이 일관되게 성립한다.
+                                </div>
+                            </div>
+                            <div class="node-item">
+                                <div class="node-header">
+                                    <div class="node-id">KU010101</div>
+                                    <div class="node-type node-content">
+                                        내용 요소
+                                    </div>
+                                </div>
+                                <div class="node-title">네 자리 이하의 수</div>
+                                <div class="node-content-text">
+                                    네 자리 이하의 수
+                                </div>
+                            </div>
+                            <div class="node-item">
+                                <div class="node-header">
+                                    <div class="node-id">KU010102</div>
+                                    <div class="node-type node-content">
+                                        내용 요소
+                                    </div>
+                                </div>
+                                <div class="node-title">
+                                    두 자리 수 범위의 덧셈과 뺄셈
+                                </div>
+                                <div class="node-content-text">
+                                    두 자리 수 범위의 덧셈과 뺄셈
+                                </div>
+                            </div>
+                            <div class="node-item">
+                                <div class="node-header">
+                                    <div class="node-id">4수01-01</div>
+                                    <div class="node-type node-standard">
+                                        성취기준
+                                    </div>
+                                </div>
+                                <div class="node-title">
+                                    큰 수의 필요성 인식
+                                </div>
+                                <div class="node-content-text">
+                                    큰 수의 필요성을 인식하면서 10000 이상의 큰
+                                    수에 대한 자릿값과 위치적 기수법을 이해하고,
+                                    수를 읽고 쓸 수 있다.
+                                </div>
+                            </div>
+                            <div class="node-item">
+                                <div class="node-header">
+                                    <div class="node-id">TS0101</div>
+                                    <div class="node-type node-term">용어</div>
+                                </div>
+                                <div class="node-title">덧셈</div>
+                                <div class="node-content-text">덧셈</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 우측 시각화 패널 -->
+                <div class="visualization-panel">
+                    <div class="panel">
+                        <div class="viz-header">
+                            <div class="panel-title">수와 연산 영역 지식맵</div>
+                            <div class="viz-tools">
+                                <button class="btn btn-sm btn-outline">
+                                    확대/축소 초기화
+                                </button>
+                                <button class="btn btn-sm">
+                                    학습 경로 보기
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="map-container">
+                            <svg class="map-svg" viewBox="0 0 1000 600">
+                                <!-- 영역 노드 -->
+                                <g transform="translate(500, 100)">
+                                    <circle r="50" fill="#3a86ff" />
+                                    <text
+                                        text-anchor="middle"
+                                        dy="5"
+                                        fill="white"
+                                        font-weight="bold"
+                                    >
+                                        수와 연산
+                                    </text>
+                                </g>
+
+                                <!-- 핵심 아이디어 노드 1 -->
+                                <g transform="translate(300, 250)">
+                                    <circle r="40" fill="#7209b7" />
+                                    <text
+                                        text-anchor="middle"
+                                        dy="5"
+                                        fill="white"
+                                        font-size="12"
+                                    >
+                                        수 표현과 확장
+                                    </text>
+                                </g>
+
+                                <!-- 핵심 아이디어 노드 2 -->
+                                <g transform="translate(500, 250)">
+                                    <circle r="40" fill="#7209b7" />
+                                    <text
+                                        text-anchor="middle"
+                                        dy="5"
+                                        fill="white"
+                                        font-size="12"
+                                    >
+                                        연산의 성질
+                                    </text>
+                                </g>
+
+                                <!-- 핵심 아이디어 노드 3 -->
+                                <g transform="translate(700, 250)">
+                                    <circle r="40" fill="#7209b7" />
+                                    <text
+                                        text-anchor="middle"
+                                        dy="5"
+                                        fill="white"
+                                        font-size="12"
+                                    >
+                                        수학적 활용
+                                    </text>
+                                </g>
+
+                                <!-- 내용 요소 노드 1 -->
+                                <g transform="translate(200, 350)">
+                                    <rect
+                                        x="-60"
+                                        y="-25"
+                                        width="120"
+                                        height="50"
+                                        rx="10"
+                                        fill="#4cc9f0"
+                                    />
+                                    <text
+                                        text-anchor="middle"
+                                        dy="5"
+                                        fill="white"
+                                        font-size="12"
+                                    >
+                                        네 자리 이하의 수
+                                    </text>
+                                </g>
+
+                                <!-- 내용 요소 노드 2 -->
+                                <g transform="translate(400, 350)">
+                                    <rect
+                                        x="-60"
+                                        y="-25"
+                                        width="120"
+                                        height="50"
+                                        rx="10"
+                                        fill="#4cc9f0"
+                                    />
+                                    <text
+                                        text-anchor="middle"
+                                        dy="5"
+                                        fill="white"
+                                        font-size="12"
+                                    >
+                                        두 자리 수의 덧셈과 뺄셈
+                                    </text>
+                                </g>
+
+                                <!-- 성취기준 노드 1 -->
+                                <g transform="translate(200, 450)">
+                                    <rect
+                                        x="-75"
+                                        y="-25"
+                                        width="150"
+                                        height="50"
+                                        rx="10"
+                                        fill="#06d6a0"
+                                    />
+                                    <text
+                                        text-anchor="middle"
+                                        dy="5"
+                                        fill="white"
+                                        font-size="12"
+                                    >
+                                        2수01-01
+                                    </text>
+                                </g>
+
+                                <!-- 성취기준 노드 2 -->
+                                <g transform="translate(400, 450)">
+                                    <rect
+                                        x="-75"
+                                        y="-25"
+                                        width="150"
+                                        height="50"
+                                        rx="10"
+                                        fill="#06d6a0"
+                                    />
+                                    <text
+                                        text-anchor="middle"
+                                        dy="5"
+                                        fill="white"
+                                        font-size="12"
+                                    >
+                                        2수01-02
+                                    </text>
+                                </g>
+
+                                <!-- 용어 노드 1 -->
+                                <g transform="translate(600, 450)">
+                                    <ellipse rx="40" ry="25" fill="#ffbe0b" />
+                                    <text
+                                        text-anchor="middle"
+                                        dy="5"
+                                        fill="white"
+                                        font-size="12"
+                                    >
+                                        덧셈
+                                    </text>
+                                </g>
+
+                                <!-- 용어 노드 2 -->
+                                <g transform="translate(700, 450)">
+                                    <ellipse rx="40" ry="25" fill="#ffbe0b" />
+                                    <text
+                                        text-anchor="middle"
+                                        dy="5"
+                                        fill="white"
+                                        font-size="12"
+                                    >
+                                        뺄셈
+                                    </text>
+                                </g>
+
+                                <!-- 영역 - 핵심 아이디어 연결선 -->
+                                <line
+                                    x1="500"
+                                    y1="100"
+                                    x2="300"
+                                    y2="250"
+                                    stroke="#aaaaaa"
+                                    stroke-width="2"
+                                />
+                                <line
+                                    x1="500"
+                                    y1="100"
+                                    x2="500"
+                                    y2="250"
+                                    stroke="#aaaaaa"
+                                    stroke-width="2"
+                                />
+                                <line
+                                    x1="500"
+                                    y1="100"
+                                    x2="700"
+                                    y2="250"
+                                    stroke="#aaaaaa"
+                                    stroke-width="2"
+                                />
+
+                                <!-- 핵심 아이디어 - 내용 요소 연결선 -->
+                                <line
+                                    x1="300"
+                                    y1="250"
+                                    x2="200"
+                                    y2="350"
+                                    stroke="#aaaaaa"
+                                    stroke-width="2"
+                                />
+                                <line
+                                    x1="500"
+                                    y1="250"
+                                    x2="400"
+                                    y2="350"
+                                    stroke="#aaaaaa"
+                                    stroke-width="2"
+                                />
+
+                                <!-- 내용 요소 - 성취기준 연결선 -->
+                                <line
+                                    x1="200"
+                                    y1="350"
+                                    x2="200"
+                                    y2="450"
+                                    stroke="#aaaaaa"
+                                    stroke-width="2"
+                                />
+                                <line
+                                    x1="400"
+                                    y1="350"
+                                    x2="400"
+                                    y2="450"
+                                    stroke="#aaaaaa"
+                                    stroke-width="2"
+                                />
+
+                                <!-- 성취기준 - 용어 연결선 -->
+                                <line
+                                    x1="400"
+                                    y1="450"
+                                    x2="600"
+                                    y2="450"
+                                    stroke="#aaaaaa"
+                                    stroke-width="2"
+                                    stroke-dasharray="5,5"
+                                />
+                                <line
+                                    x1="400"
+                                    y1="450"
+                                    x2="700"
+                                    y2="450"
+                                    stroke="#aaaaaa"
+                                    stroke-width="2"
+                                    stroke-dasharray="5,5"
+                                />
+                            </svg>
+
+                            <div class="zoom-controls">
+                                <button class="zoom-btn">+</button>
+                                <button class="zoom-btn">−</button>
+                                <button class="zoom-btn">⟲</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 상세 정보 패널 (처음에는 숨겨져 있음) -->
+                    <div class="detail-panel" style="display: block">
+                        <div class="detail-header">
+                            <div class="detail-title">
+                                핵심 아이디어: 수 표현과 확장
+                            </div>
+                            <div class="close-btn">✕</div>
+                        </div>
+                        <div class="detail-body">
+                            <div class="detail-label">식별자</div>
+                            <div class="detail-content">CI0101</div>
+
+                            <div class="detail-label">영역</div>
+                            <div class="detail-content">수와 연산</div>
+
+                            <div class="detail-label">설명</div>
+                            <div class="detail-content">
+                                사물의 양은 자연수, 분수, 소수 등으로 표현되며,
+                                수는 자연수에서 정수, 유리수, 실수로 확장된다.
+                            </div>
+
+                            <div class="detail-label">학습 상태</div>
+                            <div class="detail-content">
+                                <span
+                                    style="
+                                        color: var(--success);
+                                        font-weight: 500;
+                                    "
+                                    >학습 완료</span
+                                >
+                            </div>
+                        </div>
+
+                        <div class="detail-relations">
+                            <div class="detail-label">연관된 내용 요소</div>
+                            <div class="relation-list">
+                                <div class="relation-item">
+                                    네 자리 이하의 수
+                                </div>
+                                <div class="relation-item">분수</div>
+                                <div class="relation-item">소수</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-relations">
+                            <div class="detail-label">연관된 성취기준</div>
+                            <div class="relation-list">
+                                <div class="relation-item">
+                                    2수01-01: 수의 필요성을
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

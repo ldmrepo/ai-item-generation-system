@@ -1,0 +1,630 @@
+<!-- 교육과정 네비게이터를 구현한 HTML 예시를 만들어 드리겠습니다.
+
+위 HTML은 수학 교육과정 네비게이터의 프론트엔드 인터페이스를 구현한 예시입니다. 주요 특징은 다음과 같습니다:
+
+### 주요 기능 및 구성요소
+
+1. **좌측 검색 및 필터 영역**:
+   - 성취기준, 핵심 아이디어, 용어 등을 검색할 수 있는 검색창
+   - 학년군, 영역, 교과 역량 등의 필터 옵션
+   - 최근 조회한 성취기준 히스토리
+
+2. **우측 콘텐츠 표시 영역**:
+   - 탭 인터페이스 (성취기준, 핵심 아이디어, 내용 요소, 지식맵)
+   - 선택된 성취기준(2수01-01)의 상세 정보 카드
+   - 관련 핵심 아이디어 정보
+   - 관련 내용 요소 (지식/이해, 과정/기능, 가치/태도)
+   - 관련 용어 및 기호
+   - 성취수준별 평가 기준 (A, B, C 수준)
+   - 관련 개념 지식맵 시각화 영역
+
+### 디자인 특징
+
+- 응답형 레이아웃 (모바일 디바이스에서도 사용 가능)
+- 직관적인 색상 코딩 (영역, 핵심 아이디어, 용어, 역량 등을 구분)
+- 카드 기반 UI로 정보의 계층을 명확히 표현
+- 성취수준 단계별 시각적 구분
+
+이 인터페이스를 통해 교사들은 교육과정 요소 간의 관계를 쉽게 파악하고, 수업 설계와 평가에 필요한 정보를 효율적으로 찾을 수 있습니다. 실제 구현 시에는 백엔드와 연동하여 JSON 데이터를 동적으로 불러오고, 지식맵을 인터랙티브하게 시각화하는 기능이 추가될 수 있습니다. -->
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>수학 교육과정 네비게이터</title>
+        <style>
+            :root {
+                --primary: #4361ee;
+                --secondary: #3f37c9;
+                --accent: #4895ef;
+                --light: #f8f9fa;
+                --dark: #212529;
+                --success: #4cc9f0;
+                --warning: #f72585;
+                --info: #560bad;
+                --border-radius: 0.5rem;
+                --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+                --transition: all 0.3s ease;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Noto Sans KR", sans-serif;
+                line-height: 1.6;
+                color: var(--dark);
+                background-color: #f5f7fb;
+            }
+
+            header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+                color: white;
+                padding: 1.5rem;
+                box-shadow: var(--box-shadow);
+            }
+
+            h1,
+            h2,
+            h3,
+            h4 {
+                margin-bottom: 1rem;
+                font-weight: 600;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+                border-bottom: 2px solid var(--accent);
+                padding-bottom: 0.5rem;
+                margin-top: 1.5rem;
+            }
+
+            main {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 2rem;
+            }
+
+            .dashboard {
+                display: grid;
+                grid-template-columns: 300px 1fr;
+                gap: 2rem;
+            }
+
+            .search-box {
+                background-color: white;
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                margin-bottom: 2rem;
+            }
+
+            .search-input {
+                width: 100%;
+                padding: 0.8rem;
+                border: 1px solid #ddd;
+                border-radius: var(--border-radius);
+                margin-bottom: 1rem;
+                font-size: 1rem;
+            }
+
+            .filter-section {
+                margin-bottom: 1.5rem;
+            }
+
+            .filter-title {
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                font-size: 1rem;
+            }
+
+            .filter-options {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .filter-option {
+                padding: 0.4rem 0.8rem;
+                background-color: var(--light);
+                border-radius: 20px;
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 0.9rem;
+            }
+
+            .filter-option:hover,
+            .filter-option.active {
+                background-color: var(--accent);
+                color: white;
+            }
+
+            .content-display {
+                background-color: white;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                overflow: hidden;
+            }
+
+            .tab-header {
+                display: flex;
+                background-color: var(--secondary);
+                color: white;
+            }
+
+            .tab {
+                padding: 1rem 1.5rem;
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .tab.active {
+                background-color: var(--primary);
+                font-weight: 600;
+            }
+
+            .tab-content {
+                padding: 2rem;
+                min-height: 500px;
+            }
+
+            .std-card {
+                background-color: var(--light);
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                margin-bottom: 1.5rem;
+                border-left: 4px solid var(--primary);
+            }
+
+            .std-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 1rem;
+            }
+
+            .std-id {
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .std-grade {
+                color: var(--info);
+                font-weight: 500;
+            }
+
+            .std-content {
+                margin-bottom: 1rem;
+                font-size: 1.1rem;
+            }
+
+            .chip {
+                display: inline-block;
+                padding: 0.3rem 0.6rem;
+                background-color: #e9ecef;
+                border-radius: 20px;
+                margin-right: 0.5rem;
+                margin-bottom: 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .chip.domain {
+                background-color: #4361ee;
+                color: white;
+            }
+
+            .chip.core-idea {
+                background-color: #3a0ca3;
+                color: white;
+            }
+
+            .chip.term {
+                background-color: #4cc9f0;
+                color: white;
+            }
+
+            .chip.competency {
+                background-color: #7209b7;
+                color: white;
+            }
+
+            .related-section {
+                margin-top: 1.5rem;
+            }
+
+            .related-title {
+                font-weight: 600;
+                margin-bottom: 0.8rem;
+                font-size: 1rem;
+                color: var(--secondary);
+            }
+
+            .core-idea-box {
+                background-color: #f1f3f9;
+                padding: 1rem;
+                border-radius: var(--border-radius);
+                margin-bottom: 1rem;
+            }
+
+            .core-idea-title {
+                font-weight: 600;
+                color: var(--info);
+                margin-bottom: 0.5rem;
+            }
+
+            .knowledge-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .knowledge-item {
+                background-color: #f1f3f9;
+                padding: 1rem;
+                border-radius: var(--border-radius);
+                transition: var(--transition);
+            }
+
+            .knowledge-item:hover {
+                background-color: #e2e8f0;
+                transform: translateY(-3px);
+            }
+
+            .category-label {
+                font-size: 0.8rem;
+                color: var(--info);
+                margin-bottom: 0.3rem;
+            }
+
+            .eval-section {
+                margin-top: 2rem;
+            }
+
+            .eval-box {
+                background-color: #f1f3f9;
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                margin-bottom: 1.5rem;
+            }
+
+            .eval-title {
+                font-weight: 600;
+                margin-bottom: 1rem;
+            }
+
+            .level-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .level-item {
+                background-color: white;
+                padding: 1rem;
+                border-radius: var(--border-radius);
+                border-left: 4px solid;
+            }
+
+            .level-a {
+                border-left-color: #4361ee;
+            }
+            .level-b {
+                border-left-color: #3a0ca3;
+            }
+            .level-c {
+                border-left-color: #7209b7;
+            }
+            .level-d {
+                border-left-color: #f72585;
+            }
+            .level-e {
+                border-left-color: #4cc9f0;
+            }
+
+            .level-label {
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+            }
+
+            .level-a .level-label {
+                color: #4361ee;
+            }
+            .level-b .level-label {
+                color: #3a0ca3;
+            }
+            .level-c .level-label {
+                color: #7209b7;
+            }
+            .level-d .level-label {
+                color: #f72585;
+            }
+            .level-e .level-label {
+                color: #4cc9f0;
+            }
+
+            .visualization {
+                margin-top: 2rem;
+            }
+
+            .viz-container {
+                background-color: white;
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                height: 400px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px dashed #ccc;
+            }
+
+            .btn {
+                display: inline-block;
+                padding: 0.6rem 1.2rem;
+                background-color: var(--primary);
+                color: white;
+                border: none;
+                border-radius: var(--border-radius);
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 0.9rem;
+                text-align: center;
+                text-decoration: none;
+            }
+
+            .btn:hover {
+                background-color: var(--secondary);
+            }
+
+            .btn-outline {
+                background-color: transparent;
+                border: 1px solid var(--primary);
+                color: var(--primary);
+            }
+
+            .btn-outline:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .flex-center {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .btn-group {
+                display: flex;
+                gap: 1rem;
+                margin-top: 1.5rem;
+            }
+
+            /* 모바일 반응형 */
+            @media (max-width: 992px) {
+                .dashboard {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>수학 교육과정 네비게이터</h1>
+        </header>
+        <main>
+            <div class="dashboard">
+                <!-- 좌측 검색 및 필터 영역 -->
+                <div class="sidebar">
+                    <div class="search-box">
+                        <input
+                            type="text"
+                            class="search-input"
+                            placeholder="성취기준, 핵심 아이디어, 용어 검색..."
+                        />
+
+                        <div class="filter-section">
+                            <div class="filter-title">학년군</div>
+                            <div class="filter-options">
+                                <div class="filter-option active">1-2학년</div>
+                                <div class="filter-option">3-4학년</div>
+                                <div class="filter-option">5-6학년</div>
+                                <div class="filter-option">7-9학년</div>
+                            </div>
+                        </div>
+
+                        <div class="filter-section">
+                            <div class="filter-title">영역</div>
+                            <div class="filter-options">
+                                <div class="filter-option active">
+                                    수와 연산
+                                </div>
+                                <div class="filter-option">변화와 관계</div>
+                                <div class="filter-option">도형과 측정</div>
+                                <div class="filter-option">자료와 가능성</div>
+                            </div>
+                        </div>
+
+                        <div class="filter-section">
+                            <div class="filter-title">교과 역량</div>
+                            <div class="filter-options">
+                                <div class="filter-option">문제해결</div>
+                                <div class="filter-option">추론</div>
+                                <div class="filter-option">의사소통</div>
+                                <div class="filter-option">연결</div>
+                                <div class="filter-option">정보처리</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="search-box">
+                        <div class="filter-title">최근 조회한 성취기준</div>
+                        <div
+                            class="filter-options"
+                            style="flex-direction: column; gap: 0.8rem"
+                        >
+                            <div class="filter-option">2수01-01</div>
+                            <div class="filter-option">2수01-02</div>
+                            <div class="filter-option">2수01-03</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 우측 콘텐츠 표시 영역 -->
+                <div class="content-display">
+                    <div class="tab-header">
+                        <div class="tab active">성취기준</div>
+                        <div class="tab">핵심 아이디어</div>
+                        <div class="tab">내용 요소</div>
+                        <div class="tab">지식맵</div>
+                    </div>
+
+                    <div class="tab-content">
+                        <div class="std-card">
+                            <div class="std-header">
+                                <div class="std-id">2수01-01</div>
+                                <div class="std-grade">1-2학년군</div>
+                            </div>
+                            <div class="std-content">
+                                수의 필요성을 인식하면서 0과 100까지의 수 개념을
+                                이해하고, 수를 세고 읽고 쓸 수 있다.
+                            </div>
+                            <div>
+                                <span class="chip domain">수와 연산</span>
+                                <span class="chip competency">문제해결</span>
+                                <span class="chip competency">의사소통</span>
+                            </div>
+
+                            <div class="related-section">
+                                <div class="related-title">
+                                    관련 핵심 아이디어
+                                </div>
+                                <div class="core-idea-box">
+                                    <div class="core-idea-title">CI0101</div>
+                                    <div>
+                                        사물의 양은 자연수, 분수, 소수 등으로
+                                        표현되며, 수는 자연수에서 정수, 유리수,
+                                        실수로 확장된다.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="related-section">
+                                <div class="related-title">관련 내용 요소</div>
+                                <div class="knowledge-grid">
+                                    <div class="knowledge-item">
+                                        <div class="category-label">
+                                            지식/이해
+                                        </div>
+                                        <div>네 자리 이하의 수</div>
+                                    </div>
+                                    <div class="knowledge-item">
+                                        <div class="category-label">
+                                            과정/기능
+                                        </div>
+                                        <div>수를 세고 읽고 쓰기</div>
+                                    </div>
+                                    <div class="knowledge-item">
+                                        <div class="category-label">
+                                            가치/태도
+                                        </div>
+                                        <div>
+                                            자연수, 분수, 소수의 필요성 인식
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="related-section">
+                                <div class="related-title">
+                                    관련 용어 및 기호
+                                </div>
+                                <div>
+                                    <span class="chip term">덧셈</span>
+                                    <span class="chip term">뺄셈</span>
+                                    <span class="chip term">곱셈</span>
+                                    <span class="chip term">짝수</span>
+                                    <span class="chip term">홀수</span>
+                                    <span class="chip term">+</span>
+                                    <span class="chip term">-</span>
+                                    <span class="chip term">×</span>
+                                    <span class="chip term">=</span>
+                                    <span class="chip term"><</span>
+                                    <span class="chip term">></span>
+                                </div>
+                            </div>
+
+                            <div class="eval-section">
+                                <div class="related-title">평가 요소</div>
+                                <div class="eval-box">
+                                    <div class="eval-title">성취수준</div>
+                                    <div class="level-grid">
+                                        <div class="level-item level-a">
+                                            <div class="level-label">
+                                                A 수준
+                                            </div>
+                                            <div>
+                                                수의 필요성을 다양한 상황에서
+                                                설명하고, 0과 100까지의 수
+                                                개념을 깊이 이해하며, 수를
+                                                능숙하게 세고 읽고 쓸 수 있다.
+                                            </div>
+                                        </div>
+                                        <div class="level-item level-b">
+                                            <div class="level-label">
+                                                B 수준
+                                            </div>
+                                            <div>
+                                                수의 필요성을 인식하고, 0과
+                                                100까지의 수 개념을 이해하며,
+                                                수를 정확하게 세고 읽고 쓸 수
+                                                있다.
+                                            </div>
+                                        </div>
+                                        <div class="level-item level-c">
+                                            <div class="level-label">
+                                                C 수준
+                                            </div>
+                                            <div>
+                                                0과 100까지의 수 개념을
+                                                이해하고, 수를 세고 읽고 쓸 수
+                                                있다.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="btn-group">
+                                <a href="#" class="btn">평가 문항 보기</a>
+                                <a href="#" class="btn btn-outline"
+                                    >교수·학습 자료</a
+                                >
+                            </div>
+                        </div>
+
+                        <div class="visualization">
+                            <h2>관련 개념 지식맵</h2>
+                            <div class="viz-container">
+                                <img
+                                    src="/api/placeholder/800/400"
+                                    alt="지식맵 시각화"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

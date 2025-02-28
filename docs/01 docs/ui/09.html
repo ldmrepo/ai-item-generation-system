@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AI 기반 학습 자료 생성 시스템</title>
+        <style>
+            :root {
+                --primary: #6366f1;
+                --primary-light: #818cf8;
+                --primary-dark: #4f46e5;
+                --secondary: #22d3ee;
+                --accent: #f43f5e;
+                --success: #10b981;
+                --warning: #f59e0b;
+                --danger: #ef4444;
+                --light: #f9fafb;
+                --dark: #1f2937;
+                --gray: #6b7280;
+                --white: #ffffff;
+                --border-radius: 0.5rem;
+                --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                --transition: all 0.3s ease;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Pretendard", "Noto Sans KR", sans-serif;
+                line-height: 1.6;
+                color: var(--dark);
+                background-color: #f1f5f9;
+            }
+
+            header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary-dark)
+                );
+                color: white;
+                padding: 1.5rem 0;
+                box-shadow: var(--box-shadow);
+            }
+
+            .header-content {
+                max-width: 1280px;
+                margin: 0 auto;
+                padding: 0 1.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .app-title {
+                font-size: 1.8rem;
+                font-weight: 700;
+            }
+
+            .main-menu {
+                display: flex;
+                gap: 2rem;
+            }
+
+            .menu-item {
+                color: rgba(255, 255, 255, 0.9);
+                text-decoration: none;
+                font-weight: 500;
+                transition: var(--transition);
+            }
+
+            .menu-item:hover {
+                color: white;
+            }
+
+            main {
+                max-width: 1280px;
+                margin: 2rem auto;
+                padding: 0 1.5rem;
+            }
+
+            .dashboard {
+                display: grid;
+                grid-template-columns: 320px 1fr;
+                gap: 2rem;
+            }
+
+            .card {
+                background-color: white;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                overflow: hidden;
+                margin-bottom: 2rem;
+            }
+
+            .card-header {
+                padding: 1.5rem;
+                border-bottom: 1px solid #e2e8f0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .card-tools {
+                display: flex;
+                gap: 0.8rem;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .btn {
+                display: inline-block;
+                padding: 0.6rem 1.2rem;
+                background-color: var(--primary);
+                color: white;
+                border: none;
+                border-radius: var(--border-radius);
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 0.95rem;
+                text-align: center;
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+            .btn:hover {
+                background-color: var(--primary-dark);
+            }
+
+            .btn-outline {
+                background-color: transparent;
+                border: 1px solid var(--primary);
+                color: var(--primary);
+            }
+
+            .btn-outline:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .btn-success {
+                background-color: var(--success);
+            }
+
+            .btn-success:hover {
+                background-color: #0ca678;
+            }
+
+            .btn-warning {
+                background-color: var(--warning);
+            }
+
+            .btn-warning:hover {
+                background-color: #d97706;
+            }
+
+            .btn-danger {
+                background-color: var(--danger);
+            }
+
+            .btn-danger:hover {
+                background-color: #dc2626;
+            }
+
+            .btn-block {
+                display: block;
+                width: 100%;
+            }
+
+            .form-group {
+                margin-bottom: 1.2rem;
+            }
+
+            .form-label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+            }
+
+            .form-select,
+            .form-input {
+                width: 100%;
+                padding: 0.6rem;
+                border: 1px solid #e2e8f0;
+                border-radius: var(--border-radius);
+                font-size: 0.95rem;
+                transition: var(--transition);
+            }
+
+            .form-select:focus,
+            .form-input:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            }
+
+            .form-textarea {
+                width: 100%;
+                padding: 0.6rem;
+                border: 1px solid #e2e8f0;
+                border-radius: var(--border-radius);
+                font-size: 0.95rem;
+                min-height: 100px;
+                resize: vertical;
+                transition: var(--transition);
+            }
+
+            .form-textarea:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            }
+
+            .tabs {
+                display: flex;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .tab {
+                padding: 1rem 1.5rem;
+                cursor: pointer;
+                transition: var(--transition);
+                border-bottom: 3px solid transparent;
+                font-weight: 500;
+            }
+
+            .tab.active {
+                border-bottom-color: var(--primary);
+                color: var(--primary);
+            }
+
+            .tab:hover {
+                background-color: var(--light);
+            }
+
+            .material-preview {
+                margin-top: 1.5rem;
+                border: 1px solid #e2e8f0;
+                border-radius: var(--border-radius);
+                overflow: hidden;
+            }
+
+            .preview-header {
+                padding: 1rem;
+                background-color: var(--light);
+                border-bottom: 1px solid #e2e8f0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .preview-title {
+                font-weight: 600;
+            }
+
+            .preview-body {
+                padding: 1.5rem;
+                min-height: 300px;
+                max-height: 600px;
+                overflow-y: auto;
+            }
+
+            .generation-status {
+                margin-top: 1.5rem;
+                padding: 1rem;
+                background-color: var(--light);
+                border-radius: var(--border-radius);
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .status-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: var(--primary-light);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 1.2rem;
+            }
+
+            .status-message {
+                flex: 1;
+            }
+
+            .status-title {
+                font-weight: 600;
+                margin-bottom: 0.2rem;
+            }
+
+            .material-item {
+                padding: 1rem;
+                border-bottom: 1px solid #e2e8f0;
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .material-item:hover {
+                background-color: var(--light);
+            }
+
+            .material-item:last-child {
+                border-bottom: none;
+            }
+
+            .material-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 0.5rem;
+            }
+
+            .material-title {
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .material-type {
+                font-size: 0.85rem;
+                padding: 0.2rem 0.6rem;
+                background-color: rgba(99, 102, 241, 0.1);
+                border-radius: 20px;
+                color: var(--primary);
+            }
+
+            .material-meta {
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.85rem;
+                color: var(--gray);
+            }
+
+            .material-standard {
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+            .material-date {
+                font-size: 0.85rem;
+            }
+
+            .checkbox-group {
+                margin-top: 0.8rem;
+            }
+
+            .checkbox-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 0.5rem;
+            }
+
+            .checkbox-input {
+                margin-right: 0.5rem;
+            }
+
+            .standard-selector {
+                margin-top: 1.5rem;
+            }
+
+            .standard-title {
+                font-weight: 600;
+                margin-bottom: 1rem;
+                color: var(--primary);
+            }
+
+            .standard-list {
+                max-height: 300px;
+                overflow-y: auto;
+                border: 1px solid #e2e8f0;
+                border-radius: var(--border-radius);
+            }
+
+            .standard-item {
+                padding: 0.8rem;
+                border-bottom: 1px solid #e2e8f0;
+                display: flex;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+
+            .standard-item:last-child {
+                border-bottom: none;
+            }
+
+            .standard-checkbox {
+                margin-top: 0.2rem;
+            }
+
+            .standard-id {
+                font-weight: 600;
+                color: var(--primary);
+                margin-bottom: 0.3rem;
+            }
+
+            .standard-content {
+                font-size: 0.95rem;
+            }
+
+            .field-error {
+                color: var(--danger);
+                font-size: 0.85rem;
+                margin-top: 0.3rem;
+            }
+
+            .spinner {
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                border: 3px solid rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                border-top-color: white;
+                animation: spin 1s ease-in-out infinite;
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .tag-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-top: 0.8rem;
+            }
+
+            .tag {
+                padding: 0.3rem 0.6rem;
+                background-color: rgba(99, 102, 241, 0.1);
+                color: var(--primary);
+                border-radius: 20px;
+                font-size: 0.85rem;
+            }
+
+            .competency-selector {
+                margin-top: 1.5rem;
+            }
+
+            .competency-title {
+                font-weight: 600;
+                margin-bottom: 1rem;
+                color: var(--primary);
+            }
+
+            .competency-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 0.8rem;
+            }
+
+            .competency-item {
+                padding: 0.8rem;
+                border: 1px solid #e2e8f0;
+                border-radius: var(--border-radius);
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .competency-item:hover {
+                border-color: var(--primary-light);
+                background-color: rgba(99, 102, 241, 0.05);
+            }
+
+            .competency-item.selected {
+                border-color: var(--primary);
+                background-color: rgba(99, 102, 241, 0.1);
+            }
+
+            .competency-name {
+                font-weight: 600;
+                margin-bottom: 0.3rem;
+                color: var(--primary);
+            }
+
+            .competency-description {
+                font-size: 0.85rem;
+                color: var(--gray);
+            }
+
+            .badge {
+                display: inline-block;
+                padding: 0.25rem 0.5rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 500;
+            }
+
+            .badge-primary {
+                background-color: rgba(99, 102, 241, 0.1);
+                color: var(--primary);
+            }
+
+            .badge-success {
+                background-color: rgba(16, 185, 129, 0.1);
+                color: var(--success);
+            }
+
+            .badge-warning {
+                background-color: rgba(245, 158, 11, 0.1);
+                color: var(--warning);
+            }
+
+            .badge-danger {
+                background-color: rgba(239, 68, 68, 0.1);
+                color: var(--danger);
+            }
+
+            .loading-animation {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 300px;
+            }
+
+            .loading-dots {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background-color: var(--primary);
+                animation: bounce 1.5s infinite ease-in-out;
+            }
+
+            .dot:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            .dot:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+
+            @keyframes bounce {
+                0%,
+                100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-10px);
+                }
+            }
+
+            @media (max-width: 992px) {
+                .dashboard {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .preview-controls {
+                display: flex;
+                justify-content: flex-end;
+                gap: 0.8rem;
+                margin-top: 1rem;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="header-content">
+                <h1 class="app-title">AI 기반 학습 자료 생성 시스템</h1>
+                <div class="main-menu">
+                    <a href="#" class="menu-item">학습 자료</a>
+                    <a href="#" class="menu-item">평가 문항</a>
+                    <a href="#" class="menu-item">학습 활동</a>
+                    <a href="#" class="menu-item">라이브러리</a>
+                    <a href="#" class="menu-item">설정</a>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="dashboard">
+                <!-- 좌측 설정 패널 -->
+                <div class="sidebar">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">학습 자료 생성 설정</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">자료 유형</label>
+                                <select class="form-select">
+                                    <option>학습 활동지</option>
+                                    <option>수업 지도안</option>
+                                    <option>평가 문항</option>
+                                    <option>개념 설명 자료</option>
+                                    <option>학습 게임</option>
+                                    <option>실생활 문제 상황</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label"
+                                    >학교급 / 학년군</label
+                                >
+                                <select class="form-select">
+                                    <option>초등학교 1-2학년군</option>
+                                    <option>초등학교 3-4학년군</option>
+                                    <option>초등학교 5-6학년군</option>
+                                    <option>중학교 1-3학년군</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">교육과정 영역</label>
+                                <select class="form-select">
+                                    <option>수와 연산</option>
+                                    <option>변화와 관계</option>
+                                    <option>도형과 측정</option>
+                                    <option>자료와 가능성</option>
+                                </select>
+                            </div>
+
+                            <div class="standard-selector">
+                                <div class="standard-title">성취기준 선택</div>
+                                <div class="standard-list">
+                                    <div class="standard-item">
+                                        <input
+                                            type="checkbox"
+                                            class="standard-checkbox"
+                                            checked
+                                        />
+                                        <div>
+                                            <div class="standard-id">
+                                                2수01-01
+                                            </div>
+                                            <div class="standard-content">
+                                                수의 필요성을 인식하면서 0과
+                                                100까지의 수 개념을 이해하고,
+                                                수를 세고 읽고 쓸 수 있다.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="standard-item">
+                                        <input
+                                            type="checkbox"
+                                            class="standard-checkbox"
+                                        />
+                                        <div>
+                                            <div class="standard-id">
+                                                2수01-02
+                                            </div>
+                                            <div class="standard-content">
+                                                일, 십, 백, 천의 자릿값과 위치적
+                                                기수법을 이해하고, 네 자리
+                                                이하의 수를 읽고 쓸 수 있다.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="standard-item">
+                                        <input
+                                            type="checkbox"
+                                            class="standard-checkbox"
+                                        />
+                                        <div>
+                                            <div class="standard-id">
+                                                2수01-03
+                                            </div>
+                                            <div class="standard-content">
+                                                네 자리 이하의 수의 범위에서
+                                                수의 계열을 이해하고, 수의
+                                                크기를 비교할 수 있다.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="standard-item">
+                                        <input
+                                            type="checkbox"
+                                            class="standard-checkbox"
+                                        />
+                                        <div>
+                                            <div class="standard-id">
+                                                2수01-04
+                                            </div>
+                                            <div class="standard-content">
+                                                하나의 수를 두 수로 분해하고 두
+                                                수를 하나의 수로 합성하는 활동을
+                                                통하여 수 감각을 기른다.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="competency-selector">
+                                <div class="competency-title">
+                                    교과 역량 선택
+                                </div>
+                                <div class="competency-grid">
+                                    <div class="competency-item selected">
+                                        <div class="competency-name">
+                                            문제해결
+                                        </div>
+                                        <div class="competency-description">
+                                            수학적 지식을 활용하여 문제를
+                                            해결하는 능력
+                                        </div>
+                                    </div>
+                                    <div class="competency-item">
+                                        <div class="competency-name">추론</div>
+                                        <div class="competency-description">
+                                            수학적 사실을 추측하고 정당화하는
+                                            능력
+                                        </div>
+                                    </div>
+                                    <div class="competency-item">
+                                        <div class="competency-name">
+                                            의사소통
+                                        </div>
+                                        <div class="competency-description">
+                                            수학적 아이디어를 표현하고 공유하는
+                                            능력
+                                        </div>
+                                    </div>
+                                    <div class="competency-item">
+                                        <div class="competency-name">
+                                            정보처리
+                                        </div>
+                                        <div class="competency-description">
+                                            자료와 정보를 수집하고 분석하는 능력
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 1.5rem">
+                                <label class="form-label">난이도</label>
+                                <select class="form-select">
+                                    <option>기본</option>
+                                    <option>심화</option>
+                                    <option>보충</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">추가 요청사항</label>
+                                <textarea
+                                    class="form-textarea"
+                                    placeholder="특별히 반영하고 싶은 교수학습 방법, 주제, 상황 등을 입력하세요."
+                                ></textarea>
+                            </div>
+
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input
+                                        type="checkbox"
+                                        id="include-image"
+                                        class="checkbox-input"
+                                        checked
+                                    />
+                                    <label for="include-image"
+                                        >시각 자료 포함</label
+                                    >
+                                </div>
+                                <div class="checkbox-item">
+                                    <input
+                                        type="checkbox"
+                                        id="real-world"
+                                        class="checkbox-input"
+                                        checked
+                                    />
+                                    <label for="real-world">실생활 연계</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input
+                                        type="checkbox"
+                                        id="differentiated"
+                                        class="checkbox-input"
+                                    />
+                                    <label for="differentiated"
+                                        >수준별 문항 생성</label
+                                    >
+                                </div>
+                            </div>
+
+                            <button
+                                class="btn btn-block"
+                                style="margin-top: 1.5rem"
+                            >
+                                자료 생성하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 우측 미리보기 패널 -->
+                <div class="content">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">생성된 학습 자료</div>
+                            <div class="card-tools">
+                                <button class="btn btn-outline">
+                                    저장하기
+                                </button>
+                                <button class="btn">내보내기</button>
+                            </div>
+                        </div>
+                        <div class="tabs">
+                            <div class="tab active">미리보기</div>
+                            <div class="tab">코드</div>
+                            <div class="tab">분석</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="generation-status">
+                                <div class="status-icon">✓</div>
+                                <div class="status-message">
+                                    <div class="status-title">
+                                        학습 활동지 생성 완료
+                                    </div>
+                                    <div>
+                                        성취기준 2수01-01에 맞춘 활동지가
+                                        생성되었습니다.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="material-preview">
+                                <div class="preview-header">
+                                    <div class="preview-title">
+                                        0과 100까지의 수 개념 이해하기
+                                    </div>
+                                    <div>
+                                        <span class="badge badge-primary"
+                                            >학습 활동지</span
+                                        >
+                                        <span class="badge badge-success"
+                                            >초등 1-2학년</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="preview-body">
+                                    <h2
+                                        style="
+                                            text-align: center;
+                                            margin-bottom: 1.5rem;
+                                        "
+                                    >
+                                        0과 100까지의 수 개념 이해하기
+                                    </h2>
+
+                                    <div style="margin-bottom: 1rem">
+                                        <strong>성취기준:</strong> 2수01-01 수의
+                                        필요성을 인식하면서 0과 100까지의 수
+                                        개념을 이해하고, 수를 세고 읽고 쓸 수
+                                        있다.
+                                    </div>
+
+                                    <div style="margin-bottom: 1.5rem">
+                                        <strong>학습 목표:</strong> 일상생활
+                                        속에서 수의 필요성을 알고, 0에서
+                                        100까지의 수를 세고, 읽고, 쓸 수 있다.
+                                    </div>
+
+                                    <hr style="margin: 1.5rem 0" />
+
+                                    <div style="margin-bottom: 2rem">
+                                        <h3 style="margin-bottom: 1rem">
+                                            1. 우리 주변에서 수 찾기
+                                        </h3>
+                                        <p>
+                                            다음 그림에서 숫자가 사용된 곳을
+                                            찾아 동그라미로 표시하고, 그 숫자가
+                                            무엇을 나타내는지 적어보세요.
+                                        </p>
+                                        <div
+                                            style="
+                                                background-color: #f8f9fa;
+                                                padding: 1rem;
+                                                border-radius: 0.5rem;
+                                                margin: 1rem 0;
+                                                height: 200px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                            "
+                                        >
+                                            [교실/학교/놀이터 장면 이미지]
+                                        </div>
+                                        <table
+                                            style="
+                                                width: 100%;
+                                                border-collapse: collapse;
+                                                margin-top: 1rem;
+                                            "
+                                        >
+                                            <tr>
+                                                <th
+                                                    style="
+                                                        border: 1px solid
+                                                            #e2e8f0;
+                                                        padding: 0.5rem;
+                                                        width: 40%;
+                                                    "
+                                                >
+                                                    찾은 숫자
+                                                </th>
+                                                <th
+                                                    style="
+                                                        border: 1px solid
+                                                            #e2e8f0;
+                                                        padding: 0.5rem;
+                                                        width: 60%;
+                                                    "
+                                                >
+                                                    숫자가 나타내는 것
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    style="
+                                                        border: 1px solid
+                                                            #e2e8f0;
+                                                        padding: 0.5rem;
+                                                        height: 2rem;
+                                                    "
+                                                ></td>
+                                                <td
+                                                    style="
+                                                        border: 1px solid
+                                                            #e2e8f0;
+                                                        padding: 0.5rem;
+                                                    "
+                                                ></td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    style="
+                                                        border: 1px solid
+                                                            #e2e8f0;
+                                                        padding: 0.5rem;
+                                                        height: 2rem;
+                                                    "
+                                                ></td>
+                                                <td
+                                                    style="
+                                                        border: 1px solid
+                                                            #e2e8f0;
+                                                        padding: 0.5rem;
+                                                    "
+                                                ></td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    style="
+                                                        border: 1px solid
+                                                            #e2e8f0;
+                                                        padding: 0.5rem;
+                                                        height: 2rem;
+                                                    "
+                                                ></td>
+                                                <td
+                                                    style="
+                                                        border: 1px solid
+                                                            #e2e8f0;
+                                                        padding: 0.5rem;
+                                                    "
+                                                ></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <div style="margin-bottom: 2rem">
+                                        <h3 style="margin-bottom: 1rem">
+                                            2. 수 세기와 표현하기
+                                        </h3>
+                                        <p>
+                                            다음 물건들의 개수를 세어 빈칸에
+                                            숫자로 쓰고, 그 수를 한글로도
+                                            써보세요.
+                                        </p>
+
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: repeat(
+                                                    2,
+                                                    1fr
+                                                );
+                                                gap: 1rem;
+                                                margin: 1rem 0;
+                                            "
+                                        >
+                                            <div
+                                                style="
+                                                    border: 1px solid #e2e8f0;
+                                                    padding: 1rem;
+                                                    border-radius: 0.5rem;
+                                                "
+                                            >
+                                                <div
+                                                    style="
+                                                        background-color: #f8f9fa;
+                                                        height: 100px;
+                                                        display: flex;
+                                                        align-items: center;
+                                                        justify-content: center;
+                                                        margin-bottom: 0.5rem;
+                                                    "
+                                                >
+                                                    [연필 묶음 이미지]
+                                                </div>
+                                                <div>
+                                                    <span>연필 </span>
+                                                    <input
+                                                        type="text"
+                                                        style="
+                                                            width: 50px;
+                                                            padding: 0.3rem;
+                                                            border: 1px solid
+                                                                #e2e8f0;
+                                                            border-radius: 0.25rem;
+                                                        "
+                                                    />
+                                                    자루
+                                                </div>
+                                                <div style="margin-top: 0.5rem">
+                                                    한글로:
+                                                    <input
+                                                        type="text"
+                                                        style="
+                                                            width: 100px;
+                                                            padding: 0.3rem;
+                                                            border: 1px solid
+                                                                #e2e8f0;
+                                                            border-radius: 0.25rem;
+                                                        "
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div
+                                                style="
+                                                    border: 1px solid #e2e8f0;
+                                                    padding: 1rem;
+                                                    border-radius: 0.5rem;
+                                                "
+                                            >
+                                                <div
+                                                    style="
+                                                        background-color: #f8f9fa;
+                                                        height: 100px;
+                                                        display: flex;
+                                                        align-items: center;
+                                                        justify-content: center;
+                                                        margin-bottom: 0.5rem;
+                                                    "
+                                                >
+                                                    [사과 묶음 이미지]
+                                                </div>
+                                                <div>
+                                                    <span>사과 </span>
+                                                    <input
+                                                        type="text"
+                                                        style="
+                                                            width: 50px;
+                                                            padding: 0.3rem;
+                                                            border: 1px solid
+                                                                #e2e8f0;
+                                                            border-radius: 0.25rem;
+                                                        "
+                                                    />
+                                                    개
+                                                </div>
+                                                <div style="margin-top: 0.5rem">
+                                                    한글로:
+                                                    <input
+                                                        type="text"
+                                                        style="
+                                                            width: 100px;
+                                                            padding: 0.3rem;
+                                                            border: 1px solid
+                                                                #e2e8f0;
+                                                            border-radius: 0.25rem;
+                                                        "
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 2rem">
+                                        <h3 style="margin-bottom: 1rem">
+                                            3. 문항에 대한 토론
+                                        </h3>
+                                        <p>
+                                            생성된 학습 자료의 문항에 대해 팀별
+                                            토론을 진행하고, 의견을 공유하세요.
+                                        </p>
+                                        <div
+                                            style="
+                                                background-color: #f8f9fa;
+                                                padding: 1rem;
+                                                border-radius: 0.5rem;
+                                                margin: 1rem 0;
+                                                height: 150px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                            "
+                                        >
+                                            [토론 및 의견 작성 영역]
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="preview-controls">
+                                <button class="btn btn-outline">
+                                    미리보기 다시 생성
+                                </button>
+                                <button class="btn">최종 자료 저장</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

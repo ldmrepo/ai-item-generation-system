@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>개인화된 수학 학습 경로 제공 시스템</title>
+        <style>
+            :root {
+                --primary: #4361ee;
+                --primary-light: #4895ef;
+                --primary-dark: #3a0ca3;
+                --secondary: #4cc9f0;
+                --accent: #7209b7;
+                --success: #06d6a0;
+                --warning: #ffbe0b;
+                --danger: #ef476f;
+                --light: #f8f9fa;
+                --dark: #212529;
+                --gray: #6c757d;
+                --white: #ffffff;
+                --border-radius: 0.5rem;
+                --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+                --transition: all 0.3s ease;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Noto Sans KR", sans-serif;
+                line-height: 1.6;
+                color: var(--dark);
+                background-color: #f5f7fb;
+            }
+
+            header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary-dark)
+                );
+                color: white;
+                padding: 1.5rem 0;
+                box-shadow: var(--box-shadow);
+            }
+
+            .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 1.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .app-title {
+                font-size: 1.8rem;
+                font-weight: 700;
+            }
+
+            .user-profile {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: var(--white);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .user-name {
+                font-weight: 500;
+            }
+
+            main {
+                max-width: 1200px;
+                margin: 2rem auto;
+                padding: 0 1.5rem;
+            }
+
+            .dashboard {
+                display: grid;
+                grid-template-columns: 300px 1fr;
+                gap: 2rem;
+            }
+
+            .panel {
+                background-color: white;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .panel-title {
+                font-size: 1.3rem;
+                font-weight: 600;
+                margin-bottom: 1.5rem;
+                color: var(--primary);
+                border-bottom: 2px solid var(--secondary);
+                padding-bottom: 0.5rem;
+            }
+
+            .btn {
+                display: inline-block;
+                padding: 0.6rem 1.2rem;
+                background-color: var(--primary);
+                color: white;
+                border: none;
+                border-radius: var(--border-radius);
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 0.95rem;
+                text-align: center;
+                text-decoration: none;
+            }
+
+            .btn:hover {
+                background-color: var(--primary-dark);
+            }
+
+            .btn-outline {
+                background-color: transparent;
+                border: 1px solid var(--primary);
+                color: var(--primary);
+            }
+
+            .btn-outline:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .student-info {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .info-item {
+                display: flex;
+                justify-content: space-between;
+                border-bottom: 1px solid #eaecef;
+                padding-bottom: 0.5rem;
+            }
+
+            .info-label {
+                font-weight: 500;
+                color: var(--gray);
+            }
+
+            .info-value {
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .progress-overview {
+                margin-bottom: 2rem;
+            }
+
+            .progress-item {
+                margin-bottom: 1rem;
+            }
+
+            .progress-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 0.5rem;
+            }
+
+            .progress-domain {
+                font-weight: 500;
+            }
+
+            .progress-percentage {
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .progress-bar {
+                height: 8px;
+                background-color: #e9ecef;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background-color: var(--primary);
+            }
+
+            .progress-fill.success {
+                background-color: var(--success);
+            }
+
+            .progress-fill.warning {
+                background-color: var(--warning);
+            }
+
+            .mastered-concepts {
+                margin-bottom: 1rem;
+            }
+
+            .concept-badges {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-top: 0.5rem;
+            }
+
+            .concept-badge {
+                padding: 0.3rem 0.6rem;
+                background-color: rgba(67, 97, 238, 0.1);
+                color: var(--primary);
+                border-radius: 20px;
+                font-size: 0.85rem;
+            }
+
+            .learning-path {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .path-controls {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+
+            .path-title {
+                font-size: 1.3rem;
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .path-actions {
+                display: flex;
+                gap: 0.8rem;
+            }
+
+            .filter-select {
+                padding: 0.5rem;
+                border: 1px solid #ced4da;
+                border-radius: var(--border-radius);
+                font-size: 0.9rem;
+            }
+
+            .learning-modules {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .module-card {
+                background-color: white;
+                border-radius: var(--border-radius);
+                overflow: hidden;
+                box-shadow: var(--box-shadow);
+                transition: var(--transition);
+                position: relative;
+            }
+
+            .module-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .module-status {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                padding: 0.3rem 0.6rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 500;
+                color: white;
+            }
+
+            .status-recommended {
+                background-color: var(--primary);
+            }
+
+            .status-in-progress {
+                background-color: var(--warning);
+            }
+
+            .status-completed {
+                background-color: var(--success);
+            }
+
+            .module-image {
+                height: 150px;
+                background-color: #e9ecef;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--gray);
+                font-weight: 500;
+            }
+
+            .module-content {
+                padding: 1.5rem;
+            }
+
+            .module-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 0.8rem;
+                color: var(--primary-dark);
+            }
+
+            .module-description {
+                margin-bottom: 1rem;
+                font-size: 0.95rem;
+                color: var(--gray);
+            }
+
+            .module-meta {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.85rem;
+                color: var(--gray);
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid #eaecef;
+            }
+
+            .module-difficulty {
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+            .difficulty-dots {
+                display: flex;
+                gap: 2px;
+            }
+
+            .dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: #ced4da;
+            }
+
+            .dot.active {
+                background-color: var(--primary);
+            }
+
+            .module-time {
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+            .tag-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-top: 0.8rem;
+            }
+
+            .tag {
+                padding: 0.3rem 0.6rem;
+                background-color: rgba(76, 201, 240, 0.1);
+                color: var(--secondary);
+                border-radius: 20px;
+                font-size: 0.8rem;
+            }
+
+            .standards-list {
+                margin-top: 1rem;
+            }
+
+            .standard-item {
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+                padding: 0.6rem 0;
+                border-bottom: 1px solid #eaecef;
+            }
+
+            .standard-checkbox {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.8rem;
+                font-weight: 600;
+                color: white;
+            }
+
+            .checkbox-complete {
+                background-color: var(--success);
+            }
+
+            .checkbox-incomplete {
+                background-color: #e9ecef;
+                color: var(--gray);
+                border: 1px solid #ced4da;
+            }
+
+            .standard-id {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .tabs {
+                display: flex;
+                border-bottom: 1px solid #ced4da;
+                margin-bottom: 1.5rem;
+            }
+
+            .tab {
+                padding: 0.8rem 1.2rem;
+                cursor: pointer;
+                transition: var(--transition);
+                border-bottom: 3px solid transparent;
+            }
+
+            .tab.active {
+                border-bottom-color: var(--primary);
+                color: var(--primary);
+                font-weight: 500;
+            }
+
+            .tab:hover {
+                background-color: rgba(67, 97, 238, 0.1);
+            }
+
+            .path-visualization {
+                margin-top: 2rem;
+                border: 1px solid #ced4da;
+                border-radius: var(--border-radius);
+                padding: 1.5rem;
+                background-color: white;
+            }
+
+            .viz-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 1rem;
+                color: var(--primary);
+            }
+
+            .path-diagram {
+                height: 400px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--gray);
+                font-weight: 500;
+            }
+
+            .knowledge-gaps {
+                margin-top: 2rem;
+            }
+
+            .gap-item {
+                background-color: rgba(239, 71, 111, 0.1);
+                border-left: 4px solid var(--danger);
+                padding: 1rem;
+                border-radius: var(--border-radius);
+                margin-bottom: 1rem;
+            }
+
+            .gap-title {
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                color: var(--danger);
+            }
+
+            .gap-description {
+                font-size: 0.95rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .gap-action {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .related-modules {
+                margin-top: 2rem;
+            }
+
+            .recommendation-reason {
+                margin-top: 0.5rem;
+                padding: 0.6rem;
+                background-color: rgba(6, 214, 160, 0.1);
+                border-radius: var(--border-radius);
+                font-size: 0.9rem;
+            }
+
+            @media (max-width: 992px) {
+                .dashboard {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .tab-content {
+                margin-top: 1.5rem;
+            }
+
+            .summary-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .summary-card {
+                background-color: white;
+                border-radius: var(--border-radius);
+                padding: 1.5rem;
+                box-shadow: var(--box-shadow);
+                border-top: 5px solid var(--primary);
+            }
+
+            .summary-value {
+                font-size: 2rem;
+                font-weight: 700;
+                color: var(--primary);
+                margin-bottom: 0.5rem;
+            }
+
+            .summary-label {
+                font-size: 0.9rem;
+                color: var(--gray);
+            }
+
+            .diagnostic-results {
+                margin-top: 2rem;
+            }
+
+            .diagnostic-chart {
+                height: 300px;
+                background-color: white;
+                border-radius: var(--border-radius);
+                padding: 1.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 1.5rem;
+                box-shadow: var(--box-shadow);
+            }
+
+            .pie-placeholder {
+                width: 200px;
+                height: 200px;
+                border-radius: 50%;
+                background: conic-gradient(
+                    var(--success) 0% 65%,
+                    var(--warning) 65% 85%,
+                    var(--danger) 85% 100%
+                );
+                position: relative;
+            }
+
+            .pie-center {
+                position: absolute;
+                width: 120px;
+                height: 120px;
+                background-color: white;
+                border-radius: 50%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .pie-percentage {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--primary);
+            }
+
+            .pie-label {
+                font-size: 0.85rem;
+                color: var(--gray);
+            }
+
+            .diagnostic-legend {
+                display: flex;
+                justify-content: center;
+                gap: 2rem;
+                margin-bottom: 2rem;
+            }
+
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .legend-color {
+                width: 16px;
+                height: 16px;
+                border-radius: 4px;
+            }
+
+            .mastery-level {
+                color: var(--success);
+            }
+
+            .developing-level {
+                color: var(--warning);
+            }
+
+            .needs-help-level {
+                color: var(--danger);
+            }
+
+            .legend-color.mastery {
+                background-color: var(--success);
+            }
+
+            .legend-color.developing {
+                background-color: var(--warning);
+            }
+
+            .legend-color.needs-help {
+                background-color: var(--danger);
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="header-content">
+                <h1 class="app-title">개인화된 수학 학습 경로 제공 시스템</h1>
+                <div class="user-profile">
+                    <div class="user-avatar">JS</div>
+                    <div class="user-name">정수민 학생</div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="dashboard">
+                <!-- 좌측 학생 정보 패널 -->
+                <div class="sidebar">
+                    <div class="panel">
+                        <div class="panel-title">학생 정보</div>
+                        <div class="student-info">
+                            <div class="info-item">
+                                <div class="info-label">이름</div>
+                                <div class="info-value">정수민</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">학년</div>
+                                <div class="info-value">초등학교 2학년</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">진단평가 결과</div>
+                                <div class="info-value">78점</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">학습 진도율</div>
+                                <div class="info-value">65%</div>
+                            </div>
+                        </div>
+
+                        <div class="panel-title">영역별 진도</div>
+                        <div class="progress-overview">
+                            <div class="progress-item">
+                                <div class="progress-header">
+                                    <div class="progress-domain">수와 연산</div>
+                                    <div class="progress-percentage">85%</div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div
+                                        class="progress-fill success"
+                                        style="width: 85%"
+                                    ></div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-header">
+                                    <div class="progress-domain">
+                                        변화와 관계
+                                    </div>
+                                    <div class="progress-percentage">65%</div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div
+                                        class="progress-fill"
+                                        style="width: 65%"
+                                    ></div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-header">
+                                    <div class="progress-domain">
+                                        도형과 측정
+                                    </div>
+                                    <div class="progress-percentage">75%</div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div
+                                        class="progress-fill"
+                                        style="width: 75%"
+                                    ></div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-header">
+                                    <div class="progress-domain">
+                                        자료와 가능성
+                                    </div>
+                                    <div class="progress-percentage">45%</div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div
+                                        class="progress-fill warning"
+                                        style="width: 45%"
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-title">습득한 개념</div>
+                        <div class="mastered-concepts">
+                            <div class="concept-badges">
+                                <div class="concept-badge">
+                                    100까지의 수 세기
+                                </div>
+                                <div class="concept-badge">10단위 묶어세기</div>
+                                <div class="concept-badge">
+                                    두 자리 수의 덧셈
+                                </div>
+                                <div class="concept-badge">
+                                    두 자리 수의 뺄셈
+                                </div>
+                                <div class="concept-badge">도형의 기초</div>
+                                <div class="concept-badge">시간 읽기</div>
+                                <div class="concept-badge">길이 측정</div>
+                            </div>
+                        </div>
+
+                        <div class="panel-title">현재 학습중인 성취기준</div>
+                        <div class="standards-list">
+                            <div class="standard-item">
+                                <div
+                                    class="standard-checkbox checkbox-complete"
+                                >
+                                    ✓
+                                </div>
+                                <div>
+                                    <div class="standard-id">2수01-01</div>
+                                    <div>
+                                        수의 필요성을 인식하면서 0과 100까지의
+                                        수 개념을 이해하고, 수를 세고 읽고 쓸 수
+                                        있다.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="standard-item">
+                                <div
+                                    class="standard-checkbox checkbox-complete"
+                                >
+                                    ✓
+                                </div>
+                                <div>
+                                    <div class="standard-id">2수01-02</div>
+                                    <div>
+                                        일, 십, 백, 천의 자릿값과 위치적
+                                        기수법을 이해하고, 네 자리 이하의 수를
+                                        읽고 쓸 수 있다.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="standard-item">
+                                <div
+                                    class="standard-checkbox checkbox-incomplete"
+                                >
+                                    3
+                                </div>
+                                <div>
+                                    <div class="standard-id">2수01-03</div>
+                                    <div>
+                                        네 자리 이하의 수의 범위에서 수의 계열을
+                                        이해하고, 수의 크기를 비교할 수 있다.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 우측 학습 경로 패널 -->
+                <div class="content">
+                    <div class="panel">
+                        <div class="tabs">
+                            <div class="tab active">학습 경로</div>
+                            <div class="tab">진단 결과</div>
+                            <div class="tab">성취도 분석</div>
+                        </div>
+
+                        <div class="summary-grid">
+                            <div class="summary-card">
+                                <div class="summary-value">78%</div>
+                                <div class="summary-label">전체 숙달도</div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-value">12</div>
+                                <div class="summary-label">숙달한 성취기준</div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-value">5</div>
+                                <div class="summary-label">
+                                    발전중인 성취기준
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-value">3</div>
+                                <div class="summary-label">
+                                    보충이 필요한 영역
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="path-controls">
+                            <div class="path-title">맞춤형 학습 모듈</div>
+                            <div class="path-actions">
+                                <select class="filter-select">
+                                    <option>추천 우선순위</option>
+                                    <option>난이도 순</option>
+                                    <option>소요시간 순</option>
+                                    <option>영역별</option>
+                                </select>
+                                <button class="btn btn-outline">
+                                    경로 다시짜기
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="learning-modules">
+                            <div class="module-card">
+                                <div class="module-status status-recommended">
+                                    추천
+                                </div>
+                                <div class="module-image">
+                                    수의 크기 비교 이미지
+                                </div>
+                                <div class="module-content">
+                                    <div class="module-title">
+                                        수의 크기 비교하기
+                                    </div>
+                                    <div class="module-description">
+                                        네 자리 이하의 수를 크기 비교하고, 수
+                                        배열에서 규칙을 찾아보는 학습
+                                        활동입니다.
+                                    </div>
+                                    <div class="tag-list">
+                                        <div class="tag">수와 연산</div>
+                                        <div class="tag">2학년</div>
+                                    </div>
+                                    <div class="recommendation-reason">
+                                        <strong>추천 이유:</strong> 현재
+                                        학습중인 성취기준 2수01-03에 필요한 핵심
+                                        개념입니다.
+                                    </div>
+                                    <div class="module-meta">
+                                        <div class="module-difficulty">
+                                            난이도:
+                                            <div class="difficulty-dots">
+                                                <div class="dot active"></div>
+                                                <div class="dot active"></div>
+                                                <div class="dot"></div>
+                                            </div>
+                                        </div>
+                                        <div class="module-time">
+                                            소요시간: 20분
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="module-card">
+                                <div class="module-status status-in-progress">
+                                    학습중
+                                </div>
+                                <div class="module-image">
+                                    위치적 기수법 이미지
+                                </div>
+                                <div class="module-content">
+                                    <div class="module-title">
+                                        위치적 기수법 마스터하기
+                                    </div>
+                                    <div class="module-description">
+                                        일, 십, 백, 천의 자릿값과 위치적
+                                        기수법을 이해하고 다양한 수를 읽고 쓰는
+                                        학습 활동입니다.
+                                    </div>
+                                    <div class="tag-list">
+                                        <div class="tag">수와 연산</div>
+                                        <div class="tag">2학년</div>
+                                    </div>
+                                    <div class="module-meta">
+                                        <div class="module-difficulty">
+                                            난이도:
+                                            <div class="difficulty-dots">
+                                                <div class="dot active"></div>
+                                                <div class="dot active"></div>
+                                                <div class="dot active"></div>
+                                            </div>
+                                        </div>
+                                        <div class="module-time">
+                                            소요시간: 25분
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="module-card">
+                                <div class="module-status status-completed">
+                                    완료
+                                </div>
+                                <div class="module-image">수 개념 이미지</div>
+                                <div class="module-content">
+                                    <div class="module-title">
+                                        0과 100까지의 수 개념
+                                    </div>
+                                    <div class="module-description">
+                                        0과 100까지의 수 개념을 이해하고, 다양한
+                                        방법으로 수를 세고 읽고 쓰는 학습
+                                        활동입니다.
+                                    </div>
+                                    <div class="tag-list">
+                                        <div class="tag">수와 연산</div>
+                                        <div class="tag">2학년</div>
+                                    </div>
+                                    <div class="module-meta">
+                                        <div class="module-difficulty">
+                                            난이도:
+                                            <div class="difficulty-dots">
+                                                <div class="dot active"></div>
+                                                <div class="dot"></div>
+                                                <div class="dot"></div>
+                                            </div>
+                                        </div>
+                                        <div class="module-time">
+                                            소요시간: 15분
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="module-card">
+                                <div class="module-image">
+                                    표와 그래프 이미지
+                                </div>
+                                <div class="module-content">
+                                    <div class="module-title">
+                                        표와 그래프 기초
+                                    </div>
+                                    <div class="module-description">
+                                        간단한 자료를 표와 그래프로 나타내고
+                                        해석하는 기초 학습 활동입니다.
+                                    </div>
+                                    <div class="tag-list">
+                                        <div class="tag">자료와 가능성</div>
+                                        <div class="tag">2학년</div>
+                                    </div>
+                                    <div class="module-meta">
+                                        <div class="module-difficulty">
+                                            난이도:
+                                            <div class="difficulty-dots">
+                                                <div class="dot active"></div>
+                                                <div class="dot"></div>
+                                                <div class="dot"></div>
+                                            </div>
+                                        </div>
+                                        <div class="module-time">
+                                            소요시간: 20분
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="path-visualization"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AI 기반 수학 평가도구 제작기</title>
+        <!-- Bootstrap CSS -->
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <!-- Bootstrap Icons -->
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --primary: #4263eb;
+                --primary-light: #5c7cfa;
+                --primary-dark: #364fc7;
+                --secondary: #22b8cf;
+                --accent: #f03e3e;
+                --success: #37b24d;
+                --warning: #f59f00;
+                --danger: #e03131;
+                --light: #f8f9fa;
+                --dark: #212529;
+                --gray: #adb5bd;
+                --white: #ffffff;
+            }
+
+            body {
+                background-color: #f8fafc;
+                font-family: "Pretendard", -apple-system, BlinkMacSystemFont,
+                    system-ui, Roboto, sans-serif;
+                padding-bottom: 70px; /* Space for bottom nav */
+            }
+
+            /* Custom scroll for options */
+            .options-scroll {
+                max-height: 300px;
+                overflow-y: auto;
+                border-radius: 0.5rem;
+                border: 1px solid #e2e8f0;
+            }
+
+            .options-scroll::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .options-scroll::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+
+            .options-scroll::-webkit-scrollbar-thumb {
+                background: #cbd5e0;
+                border-radius: 3px;
+            }
+
+            .options-scroll::-webkit-scrollbar-thumb:hover {
+                background: #a0aec0;
+            }
+
+            /* Header styles */
+            .app-header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary-dark)
+                );
+                color: white;
+                position: sticky;
+                top: 0;
+                z-index: 1020;
+                padding: 0.75rem 1rem;
+            }
+
+            .header-title {
+                font-weight: 700;
+                font-size: 1.2rem;
+            }
+
+            /* Bottom navigation */
+            .bottom-nav {
+                background: white;
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                z-index: 1020;
+            }
+
+            .bottom-nav .nav-link {
+                font-size: 0.75rem;
+                color: #64748b;
+                text-align: center;
+                padding: 0.5rem 0;
+            }
+
+            .bottom-nav .nav-link.active {
+                color: var(--primary);
+            }
+
+            .bottom-nav i {
+                font-size: 1.2rem;
+                display: block;
+                margin-bottom: 0.2rem;
+            }
+
+            /* Card styles */
+            .option-card {
+                border-radius: 0.8rem;
+                transition: transform 0.2s ease;
+                border: 2px solid transparent;
+            }
+
+            .option-card:hover {
+                transform: translateY(-3px);
+            }
+
+            .option-card.selected {
+                border-color: var(--primary);
+                background-color: rgba(66, 99, 235, 0.05);
+            }
+
+            .option-icon {
+                font-size: 1.5rem;
+                color: var(--primary);
+                margin-bottom: 0.5rem;
+            }
+
+            /* Standard item styles */
+            .standard-item {
+                border-radius: 0.6rem;
+                border-left: 4px solid transparent;
+                transition: all 0.2s ease;
+                margin-bottom: 0.5rem;
+            }
+
+            .standard-item:hover {
+                background-color: rgba(66, 99, 235, 0.05);
+            }
+
+            .standard-item.selected {
+                border-left-color: var(--primary);
+                background-color: rgba(66, 99, 235, 0.1);
+            }
+
+            .standard-id {
+                color: var(--primary);
+                font-weight: 600;
+                font-size: 0.9rem;
+            }
+
+            /* Level selection */
+            .level-option {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 2px solid #e2e8f0;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .level-option:hover {
+                border-color: var(--primary-light);
+                background-color: rgba(66, 99, 235, 0.05);
+            }
+
+            .level-option.selected {
+                border-color: var(--primary);
+                background-color: var(--primary);
+                color: white;
+            }
+
+            /* Question styles */
+            .question-card {
+                border-radius: 0.8rem;
+                transition: all 0.2s ease;
+                border-left: 4px solid var(--primary);
+                margin-bottom: 1rem;
+            }
+
+            .question-card:hover {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+
+            .question-number {
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .question-options {
+                list-style-type: none;
+                padding-left: 0;
+            }
+
+            .question-option {
+                padding: 0.75rem;
+                margin-bottom: 0.5rem;
+                border-radius: 0.5rem;
+                border: 1px solid #e2e8f0;
+                transition: all 0.2s ease;
+                cursor: pointer;
+            }
+
+            .question-option:hover {
+                background-color: rgba(66, 99, 235, 0.05);
+            }
+
+            .question-option.correct {
+                background-color: rgba(55, 178, 77, 0.1);
+                border-color: var(--success);
+                color: var(--success);
+            }
+
+            .option-prefix {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #f1f5f9;
+                margin-right: 0.5rem;
+                font-weight: 600;
+                font-size: 0.85rem;
+            }
+
+            /* Badge styles */
+            .badge-primary-soft {
+                background-color: rgba(66, 99, 235, 0.1);
+                color: var(--primary);
+            }
+
+            .badge-success-soft {
+                background-color: rgba(55, 178, 77, 0.1);
+                color: var(--success);
+            }
+
+            .badge-warning-soft {
+                background-color: rgba(245, 159, 0, 0.1);
+                color: var(--warning);
+            }
+
+            .badge-danger-soft {
+                background-color: rgba(224, 49, 49, 0.1);
+                color: var(--danger);
+            }
+
+            /* AI Generation animation */
+            .ai-thinking {
+                background-color: rgba(66, 99, 235, 0.05);
+                border-radius: 0.8rem;
+                padding: 1rem;
+                display: flex;
+                align-items: center;
+            }
+
+            .dot-typing {
+                position: relative;
+                left: -9999px;
+                width: 10px;
+                height: 10px;
+                border-radius: 5px;
+                background-color: var(--primary);
+                box-shadow: 9984px 0 0 0 var(--primary),
+                    9999px 0 0 0 var(--primary), 10014px 0 0 0 var(--primary);
+                animation: dot-typing 1.5s infinite linear;
+            }
+
+            @keyframes dot-typing {
+                0% {
+                    box-shadow: 9984px 0 0 0 var(--primary),
+                        9999px 0 0 0 var(--primary),
+                        10014px 0 0 0 var(--primary);
+                }
+                16.667% {
+                    box-shadow: 9984px -10px 0 0 var(--primary),
+                        9999px 0 0 0 var(--primary),
+                        10014px 0 0 0 var(--primary);
+                }
+                33.333% {
+                    box-shadow: 9984px 0 0 0 var(--primary),
+                        9999px 0 0 0 var(--primary),
+                        10014px 0 0 0 var(--primary);
+                }
+                50% {
+                    box-shadow: 9984px 0 0 0 var(--primary),
+                        9999px -10px 0 0 var(--primary),
+                        10014px 0 0 0 var(--primary);
+                }
+                66.667% {
+                    box-shadow: 9984px 0 0 0 var(--primary),
+                        9999px 0 0 0 var(--primary),
+                        10014px 0 0 0 var(--primary);
+                }
+                83.333% {
+                    box-shadow: 9984px 0 0 0 var(--primary),
+                        9999px 0 0 0 var(--primary),
+                        10014px -10px 0 0 var(--primary);
+                }
+                100% {
+                    box-shadow: 9984px 0 0 0 var(--primary),
+                        9999px 0 0 0 var(--primary),
+                        10014px 0 0 0 var(--primary);
+                }
+            }
+
+            /* Section titles */
+            .section-title {
+                position: relative;
+                padding-left: 15px;
+                margin-bottom: 1rem;
+                font-weight: 600;
+            }
+
+            .section-title::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 4px;
+                height: 18px;
+                background-color: var(--primary);
+                border-radius: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- App Header -->
+        <div class="app-header shadow-sm py-3 px-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="header-title">AI 기반 수학 평가도구 제작기</div>
+                <div>
+                    <button
+                        class="btn btn-sm text-white"
+                        type="button"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#helpOffcanvas"
+                    >
+                        <i class="bi bi-question-circle"></i>
+                    </button>
+                    <button
+                        class="btn btn-sm text-white"
+                        type="button"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#historyOffcanvas"
+                    >
+                        <i class="bi bi-clock-history"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container py-3">
+            <!-- Step 1: Basic Settings -->
+            <div id="step1" class="mb-4">
+                <h5 class="section-title">기본 설정</h5>
+                <div class="mb-3">
+                    <label class="form-label">평가 유형</label>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div
+                                class="card option-card shadow-sm p-3 text-center selected"
+                            >
+                                <div class="option-icon">
+                                    <i class="bi bi-journal-check"></i>
+                                </div>
+                                <div class="option-label">단원 평가</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div
+                                class="card option-card shadow-sm p-3 text-center"
+                            >
+                                <div class="option-icon">
+                                    <i class="bi bi-clipboard-check"></i>
+                                </div>
+                                <div class="option-label">형성 평가</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div
+                                class="card option-card shadow-sm p-3 text-center"
+                            >
+                                <div class="option-icon">
+                                    <i class="bi bi-search"></i>
+                                </div>
+                                <div class="option-label">진단 평가</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div
+                                class="card option-card shadow-sm p-3 text-center"
+                            >
+                                <div class="option-icon">
+                                    <i class="bi bi-journal-richtext"></i>
+                                </div>
+                                <div class="option-label">수행 평가</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">학교급 / 학년군</label>
+                    <select class="form-select rounded-pill">
+                        <option>초등학교 1-2학년군</option>
+                        <option>초등학교 3-4학년군</option>
+                        <option>초등학교 5-6학년군</option>
+                        <option>중학교 1-3학년군</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">교육과정 영역</label>
+                    <select class="form-select rounded-pill">
+                        <option>수와 연산</option>
+                        <option>변화와 관계</option>
+                        <option>도형과 측정</option>
+                        <option>자료와 가능성</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Step 2: Standard Selection -->
+            <div id="step2" class="mb-4">
+                <h5 class="section-title">성취기준 선택</h5>
+                <p class="text-muted small mb-3">
+                    평가에 포함할 성취기준을 선택해주세요. (최대 3개)
+                </p>
+                <div class="options-scroll mb-3">
+                    <div class="standard-item p-3 selected">
+                        <div class="form-check">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="standard1"
+                                checked
+                            />
+                            <label class="form-check-label" for="standard1">
+                                <div class="standard-id mb-1">2수01-01</div>
+                                <div class="small">
+                                    수의 필요성을 인식하면서 0과 100까지의 수
+                                    개념을 이해하고, 수를 세고 읽고 쓸 수 있다.
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="standard-item p-3 selected">
+                        <div class="form-check">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="standard2"
+                                checked
+                            />
+                            <label class="form-check-label" for="standard2">
+                                <div class="standard-id mb-1">2수01-02</div>
+                                <div class="small">
+                                    일, 십, 백, 천의 자릿값과 위치적 기수법을
+                                    이해하고, 네 자리 이하의 수를 읽고 쓸 수
+                                    있다.
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="standard-item p-3">
+                        <div class="form-check">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="standard3"
+                            />
+                            <label class="form-check-label" for="standard3">
+                                <div class="standard-id mb-1">2수01-03</div>
+                                <div class="small">
+                                    네 자리 이하의 수의 범위에서 수의 계열을
+                                    이해하고, 수의 크기를 비교할 수 있다.
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="standard-item p-3">
+                        <div class="form-check">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="standard4"
+                            />
+                            <label class="form-check-label" for="standard4">
+                                <div class="standard-id mb-1">2수01-04</div>
+                                <div class="small">
+                                    하나의 수를 두 수로 분해하고 두 수를 하나의
+                                    수로 합성하는 활동을 통하여 수 감각을
+                                    기른다.
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-3 shadow-sm">
+                    <div class="mb-2">
+                        <label class="form-label">선택된 성취기준</label>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <span class="badge bg-primary rounded-pill py-2 px-3"
+                            >2수01-01</span
+                        >
+                        <span class="badge bg-primary rounded-pill py-2 px-3"
+                            >2수01-02</span
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Detail Settings -->
+            <div id="step3" class="mb-4">
+                <h5 class="section-title">세부 설정</h5>
+                <div class="mb-3">
+                    <label class="form-label">성취수준 설정</label>
+                    <div class="d-flex gap-2 mb-2">
+                        <div class="level-option">A</div>
+                        <div class="level-option selected">B</div>
+                        <div class="level-option">C</div>
+                        <div class="level-option">D</div>
+                        <div class="level-option">E</div>
+                    </div>
+                    <div class="card p-3 bg-light border-0">
+                        <small class="text-muted"
+                            ><strong>B 수준:</strong> 수의 필요성을 인식하고,
+                            0과 100까지의 수 개념을 이해하며, 수를 정확하게 세고
+                            읽고 쓸 수 있다.</small
+                        >
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">문항 유형</label>
+                    <select class="form-select rounded-pill">
+                        <option selected>객관식</option>
+                        <option>주관식</option>
+                        <option>서술형</option>
+                        <option>혼합형</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <div
+                        class="d-flex justify-content-between align-items-center mb-2"
+                    >
+                        <label class="form-label mb-0">문항 수</label>
+                        <span class="badge badge-primary-soft">10문항</span>
+                    </div>
+                    <input
+                        type="range"
+                        class="form-range"
+                        min="5"
+                        max="20"
+                        step="5"
+                        value="10"
+                        id="questionCountRange"
+                    />
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">5</small>
+                        <small class="text-muted">10</small>
+                        <small class="text-muted">15</small>
+                        <small class="text-muted">20</small>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">난이도 분포</label>
+                    <select class="form-select rounded-pill">
+                        <option selected>표준 분포 (상:중:하 = 2:5:3)</option>
+                        <option>쉬운 난이도 (상:중:하 = 1:4:5)</option>
+                        <option>어려운 난이도 (상:중:하 = 4:4:2)</option>
+                        <option>균등 분포 (상:중:하 = 1:1:1)</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">추가 요청사항 (선택)</label>
+                    <textarea
+                        class="form-control"
+                        rows="3"
+                        placeholder="특별히 반영하고 싶은 문제 유형, 실생활 소재 등을 입력하세요."
+                    ></textarea>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="imageCheck"
+                            checked
+                        />
+                        <label class="form-check-label" for="imageCheck"
+                            >시각 자료 포함</label
+                        >
+                    </div>
+                    <div class="form-check form-switch">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="answerCheck"
+                            checked
+                        />
+                        <label class="form-check-label" for="answerCheck"
+                            >정답 및 해설 포함</label
+                        >
+                    </div>
+                    <div class="form-check form-switch">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="contextCheck"
+                            checked
+                        />
+                        <label class="form-check-label" for="contextCheck"
+                            >실생활 맥락 활용</label
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generate Button -->
+            <div class="d-grid gap-2 mb-4">
+                <button
+                    class="btn btn-primary py-2 rounded-pill shadow-sm"
+                    id="generateBtn"
+                >
+                    <i class="bi bi-magic"></i> AI로 평가 문항 생성하기
+                </button>
+            </div>
+
+            <!-- Generation Status -->
+            <div class="ai-thinking p-3 d-flex align-items-center mb-4">
+                <div class="me-3">
+                    <div class="dot-typing"></div>
+                </div>
+                <div>
+                    <div class="fw-semibold">AI가 문항을 생성 중입니다...</div>
+                    <div class="small text-muted">
+                        2수01-01, 2수01-02 성취기준에 맞는 B수준 평가 문항
+                        10개를 생성 중입니다.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generated Questions -->
+            <div class="mb-4">
+                <div
+                    class="d-flex justify-content-between align-items-center mb-3"
+                >
+                    <h5 class="section-title mb-0">생성된 평가 문항</h5>
+                    <div>
+                        <button
+                            class="btn btn-sm btn-outline-primary rounded-pill"
+                        >
+                            <i class="bi bi-download"></i> 내보내기
+                        </button>
+                    </div>
+                </div>
+
+                <div class="d-flex mb-3 overflow-auto pb-2" style="gap: 8px">
+                    <span
+                        class="badge badge-primary-soft rounded-pill py-2 px-3"
+                        >전체</span
+                    >
+                    <span
+                        class="badge badge-primary-soft rounded-pill py-2 px-3"
+                        >2수01-01</span
+                    >
+                    <span
+                        class="badge badge-primary-soft rounded-pill py-2 px-3"
+                        >2수01-02</span
+                    >
+                    <span
+                        class="badge badge-primary-soft rounded-pill py-2 px-3"
+                        >난이도: 상</span
+                    >
+                    <span
+                        class="badge badge-primary-soft rounded-pill py-2 px-3"
+                        >난이도: 중</span
+                    >
+                    <span
+                        class="badge badge-primary-soft rounded-pill py-2 px-3"
+                        >난이도: 하</span
+                    >
+                </div>
+
+                <div class="question-card card shadow-sm p-3 mb-3">
+                    <div
+                        class="d-flex justify-content-between align-items-start mb-2"
+                    >
+                        <div class="question-number">문항 1</div>
+                        <div>
+                            <span class="badge badge-warning-soft"
+                                >난이도: 하</span
+                            >
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p>다음 중 숫자 78을 바르게 읽은 것은 무엇인가요?</p>
+                        <ul class="question-options">
+                            <li class="question-option">
+                                <span class="option-prefix">①</span> 일흔여덟
+                            </li>
+                            <li class="question-option">
+                                <span class="option-prefix">②</span> 여든여덟
+                            </li>
+                            <li class="question-option correct">
+                                <span class="option-prefix">③</span> 칠십팔
+                            </li>
+                            <li class="question-option">
+                                <span class="option-prefix">④</span> 팔십칠
+                            </li>
+                            <li class="question-option">
+                                <span class="option-prefix">⑤</span> 칠팔
+                            </li>
+                        </ul>
+                    </div>
+                    <div
+                        class="d-flex justify-content-between align-items-center"
+                    >
+                        <div>
+                            <span class="badge badge-primary-soft me-1"
+                                >2수01-01</span
+                            >
+                            <span class="badge badge-success-soft">1점</span>
+                        </div>
+                        <div>
+                            <button
+                                class="btn btn-sm btn-outline-primary rounded-circle"
+                            >
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button
+                                class="btn btn-sm btn-outline-primary rounded-circle ms-1"
+                            >
+                                <i class="bi bi-arrow-repeat"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-card card shadow-sm p-3 mb-3">
+                    <div
+                        class="d-flex justify-content-between align-items-start mb-2"
+                    >
+                        <div class="question-number">문항 2</div>
+                        <div>
+                            <span class="badge badge-primary-soft"
+                                >난이도: 중</span
+                            >
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p>
+                            수 카드를 사용하여 두 자리 수를 만들려고 합니다.
+                            다음 중 가장 큰 수를 만드는 방법은 무엇인가요?
+                        </p>
+                        <div class="bg-light p-3 text-center rounded mb-3">
+                            [수 카드 이미지: 3, 5, 7, 9]
+                        </div>
+                        <ul class="question-options">
+                            <li class="question-option">
+                                <span class="option-prefix">①</span> 3과 5를
+                                사용하여 53
+                            </li>
+                            <li class="question-option">
+                                <span class="option-prefix">②</span> 3과 7을
+                                사용하여 73
+                            </li>
+                            <li class="question-option">
+                                <span class="option-prefix">③</span> 5와 7을
+                                사용하여 75
+                            </li>
+                            <li class="question-option">
+                                <span class="option-prefix">④</span> 5와 9를
+                                사용하여 59
+                            </li>
+                            <li class="question-option correct">
+                                <span class="option-prefix">⑤</span> 7과 9를
+                                사용하여 97
+                            </li>
+                        </ul>
+                    </div>
+                    <div
+                        class="d-flex justify-content-between align-items-center"
+                    >
+                        <div>
+                            <span class="badge badge-primary-soft me-1"
+                                >2수01-02</span
+                            >
+                            <span class="badge badge-success-soft">2점</span>
+                        </div>
+                        <div>
+                            <button
+                                class="btn btn-sm btn-outline-primary rounded-circle"
+                            >
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button
+                                class="btn btn-sm btn-outline-primary rounded-circle ms-1"
+                            >
+                                <i class="bi bi-arrow-repeat"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center mb-4">
+                    <button class="btn btn-primary rounded-pill py-2 px-4">
+                        <i class="bi bi-plus-lg"></i> 더 많은 문항 생성하기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav py-1">
+            <div class="container">
+                <div class="row g-0">
+                    <div class="col">
+                        <a href="#" class="nav-link active">
+                            <i class="bi bi-house-fill"></i>
+                            <span>홈</span>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-bar-chart-line-fill"></i>
+                            <span>분석</span>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-book-fill"></i>
+                            <span>학습</span>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-gear-fill"></i>
+                            <span>설정</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Search Overlay -->
+        <div class="overlay-search" id="overlaySearch">
+            <div class="container py-4">
+                <div class="input-group mb-3">
+                    <input
+                        type="text"
+                        class="form-control search-box border-end-0"
+                        placeholder="검색어를 입력하세요..."
+                        aria-label="Search"
+                    />
+                    <button
+                        class="btn btn-primary"
+                        type="button"
+                        id="searchCloseBtn"
+                    >
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <!-- 검색 결과 영역 -->
+                <div id="searchResults">
+                    <p class="text-muted">검색 결과가 여기에 표시됩니다.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS Bundle (Popper.js 포함) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // 검색 오버레이 열기/닫기 기능 구현
+            const searchBtn = document.getElementById("searchBtn");
+            const overlaySearch = document.getElementById("overlaySearch");
+            const searchCloseBtn = document.getElementById("searchCloseBtn");
+
+            searchBtn.addEventListener("click", () => {
+                overlaySearch.style.display = "block";
+            });
+
+            searchCloseBtn.addEventListener("click", () => {
+                overlaySearch.style.display = "none";
+            });
+        </script>
+    </body>
+</html>

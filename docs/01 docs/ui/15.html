@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>고등학교 수학 평가도구 제작기</title>
+        <!-- Bootstrap CSS -->
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <!-- Bootstrap Icons -->
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --primary: #4f46e5;
+                --primary-light: #6366f1;
+                --primary-dark: #4338ca;
+                --secondary: #0ea5e9;
+                --accent: #8b5cf6;
+                --success: #10b981;
+                --warning: #f59e0b;
+                --danger: #ef4444;
+                --light: #f8fafc;
+                --dark: #0f172a;
+                --gray: #64748b;
+            }
+
+            body {
+                background-color: #f8fafc;
+                font-family: "Pretendard", -apple-system, BlinkMacSystemFont,
+                    system-ui, Roboto, sans-serif;
+                line-height: 1.6;
+                padding-bottom: 5rem;
+                color: #334155;
+            }
+
+            /* Elegant Header */
+            .app-header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--accent)
+                );
+                color: white;
+                position: relative;
+                padding: 1.2rem 0;
+                margin-bottom: 2rem;
+                overflow: hidden;
+            }
+
+            .app-header::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.06' fill-rule='evenodd'/%3E%3C/svg%3E");
+                opacity: 0.4;
+                z-index: 0;
+            }
+
+            .header-content {
+                position: relative;
+                z-index: 1;
+            }
+
+            .header-title {
+                font-weight: 700;
+                font-size: 1.5rem;
+            }
+
+            /* Stylish Cards */
+            .card {
+                border: none;
+                border-radius: 1rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                overflow: hidden;
+            }
+
+            .card:hover {
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+
+            .card-header {
+                background-color: var(--light);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+                font-weight: 600;
+            }
+
+            /* Custom Form Elements */
+            .form-control,
+            .form-select {
+                border-radius: 0.7rem;
+                padding: 0.7rem 1rem;
+                border: 1px solid #e2e8f0;
+                transition: all 0.2s ease;
+            }
+
+            .form-control:focus,
+            .form-select:focus {
+                border-color: var(--primary-light);
+                box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.2);
+            }
+
+            .form-label {
+                font-weight: 500;
+                color: #4b5563;
+                margin-bottom: 0.5rem;
+            }
+
+            /* Beautiful Badges */
+            .badge-soft-primary {
+                background-color: rgba(79, 70, 229, 0.1);
+                color: var(--primary);
+                font-weight: 500;
+                padding: 0.4rem 0.8rem;
+                border-radius: 0.5rem;
+            }
+
+            .badge-soft-success {
+                background-color: rgba(16, 185, 129, 0.1);
+                color: var(--success);
+                font-weight: 500;
+                padding: 0.4rem 0.8rem;
+                border-radius: 0.5rem;
+            }
+
+            .badge-soft-warning {
+                background-color: rgba(245, 158, 11, 0.1);
+                color: var(--warning);
+                font-weight: 500;
+                padding: 0.4rem 0.8rem;
+                border-radius: 0.5rem;
+            }
+
+            .badge-soft-danger {
+                background-color: rgba(239, 68, 68, 0.1);
+                color: var(--danger);
+                font-weight: 500;
+                padding: 0.4rem 0.8rem;
+                border-radius: 0.5rem;
+            }
+
+            /* Enhanced Buttons */
+            .btn {
+                border-radius: 0.7rem;
+                padding: 0.6rem 1.2rem;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+
+            .btn-primary {
+                background-color: var(--primary);
+                border-color: var(--primary);
+            }
+
+            .btn-primary:hover {
+                background-color: var(--primary-dark);
+                border-color: var(--primary-dark);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+
+            .btn-outline-primary {
+                color: var(--primary);
+                border-color: var(--primary);
+            }
+
+            .btn-outline-primary:hover {
+                background-color: var(--primary);
+                border-color: var(--primary);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+
+            .btn-pill {
+                border-radius: 50rem;
+            }
+
+            /* Modern Achievement Level Selectors */
+            .level-option {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: 2px solid #e2e8f0;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                color: #64748b;
+            }
+
+            .level-option:hover {
+                border-color: var(--primary-light);
+                background-color: rgba(99, 102, 241, 0.05);
+                transform: translateY(-3px);
+            }
+
+            .level-option.selected {
+                background-color: var(--primary);
+                border-color: var(--primary);
+                color: white;
+                transform: translateY(-3px);
+                box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4);
+            }
+
+            /* Achievement Level Cards */
+            .achievement-level {
+                padding: 1.2rem;
+                border-radius: 0.8rem;
+                margin-bottom: 1rem;
+                transition: all 0.3s ease;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            }
+
+            .achievement-level:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            }
+
+            .level-a {
+                background-color: rgba(16, 185, 129, 0.08);
+                border-left: 5px solid var(--success);
+            }
+
+            .level-b {
+                background-color: rgba(14, 165, 233, 0.08);
+                border-left: 5px solid var(--secondary);
+            }
+
+            .level-c {
+                background-color: rgba(245, 158, 11, 0.08);
+                border-left: 5px solid var(--warning);
+            }
+
+            .level-d {
+                background-color: rgba(239, 68, 68, 0.08);
+                border-left: 5px solid var(--danger);
+            }
+
+            .level-e {
+                background-color: rgba(100, 116, 139, 0.08);
+                border-left: 5px solid var(--gray);
+            }
+
+            /* Standard Items with Hover Effects */
+            .standard-item {
+                border-radius: 0.8rem;
+                border-left: 5px solid transparent;
+                transition: all 0.3s ease;
+                background-color: #f9fafb;
+                margin-bottom: 0.5rem;
+            }
+
+            .standard-item:hover {
+                background-color: rgba(99, 102, 241, 0.05);
+                transform: translateY(-3px);
+            }
+
+            .standard-item.selected {
+                border-left-color: var(--primary);
+                background-color: rgba(99, 102, 241, 0.1);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+
+            .standard-id {
+                color: var(--primary);
+                font-weight: 600;
+            }
+
+            /* Section Titles with Gradient */
+            .section-title {
+                position: relative;
+                padding-left: 18px;
+                margin-bottom: 1.2rem;
+                font-weight: 600;
+                color: #1e293b;
+            }
+
+            .section-title::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0.3rem;
+                bottom: 0.3rem;
+                width: 5px;
+                background: linear-gradient(
+                    to bottom,
+                    var(--primary),
+                    var(--accent)
+                );
+                border-radius: 3px;
+            }
+
+            /* Elegant Evaluation Cards */
+            .evaluation-card {
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border-radius: 1rem;
+                overflow: hidden;
+            }
+
+            .evaluation-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+
+            .evaluation-card.selected {
+                border: 2px solid var(--primary);
+                background-color: rgba(99, 102, 241, 0.05);
+            }
+
+            /* AI Thinking Animation */
+            .ai-thinking {
+                background-color: rgba(99, 102, 241, 0.05);
+                border-radius: 1rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+                position: relative;
+            }
+
+            .ai-thinking::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 0%;
+                height: 3px;
+                background: linear-gradient(
+                    to right,
+                    var(--primary),
+                    var(--accent)
+                );
+                animation: progress-bar 2s infinite ease-in-out;
+            }
+
+            @keyframes progress-bar {
+                0% {
+                    width: 0%;
+                }
+                50% {
+                    width: 70%;
+                }
+                100% {
+                    width: 100%;
+                }
+            }
+
+            .dot-typing {
+                position: relative;
+                left: -9999px;
+                width: 10px;
+                height: 10px;
+                border-radius: 5px;
+                background-color: var(--primary);
+                color: var(--primary);
+                box-shadow: 9984px 0 0 0 var(--primary),
+                    9999px 0 0 0 var(--primary), 10014px 0 0 0 var(--primary);
+                animation: dot-typing 1.5s infinite linear;
+            }
+
+            @keyframes dot-typing {
+                0% {
+                    box-shadow: 9984px 0 0 0 var(--primary),
+                        9999px 0 0 0 var(--primary),
+                        10014px 0 0 0 var(--primary);
+                }
+                16.667% {
+                    box-shadow: 9984px -10px 0 0 var(--primary),
+                        9999px 0 0 0 var(--primary),
+                        10014px 0 0 0 var(--primary);
+                }
+                33.333% {
+                    box-shadow: 9984px 0 0 0 var(--primary),
+                        9999px 0 0 0 var(--primary),
+                        10014px 0 0 0 var(--primary);
+                }
+                50% {
+                    box-shadow: 9984px 0 0 0 var(--primary),
+                        9999px -10px 0 0 var(--primary),
+                        10014px 0 0 0 var(--primary);
+                }
+                66.667% {
+                    box-shadow: 9984px 0 0 0 var(--primary),
+                        9999px 0 0 0 var(--primary),
+                        10014px 0 0 0 var(--primary);
+                }
+                83.333% {
+                    box-shadow: 9984px 0 0 0 var(--primary),
+                        9999px 0 0 0 var(--primary),
+                        10014px -10px 0 0 var(--primary);
+                }
+                100% {
+                    box-shadow: 9984px 0 0 0 var(--primary),
+                        9999px 0 0 0 var(--primary),
+                        10014px 0 0 0 var(--primary);
+                }
+            }
+
+            /* Question Preview Styling */
+            .question-preview {
+                border-radius: 0.8rem;
+                background-color: #f8fafc;
+                border: 1px solid #e2e8f0;
+                padding: 1.5rem;
+                position: relative;
+            }
+
+            .question-preview::before {
+                content: "문항 미리보기";
+                position: absolute;
+                top: -10px;
+                left: 20px;
+                background-color: white;
+                padding: 0 10px;
+                font-size: 12px;
+                color: var(--gray);
+            }
+
+            /* Checkbox styling */
+            .custom-checkbox .form-check-input {
+                width: 1.2em;
+                height: 1.2em;
+                margin-top: 0.15em;
+                background-color: #fff;
+                border: 1px solid #cbd5e1;
+                border-radius: 0.25em;
+                transition: all 0.3s ease;
+            }
+
+            .custom-checkbox .form-check-input:checked {
+                background-color: var(--primary);
+                border-color: var(--primary);
+            }
+
+            .custom-checkbox .form-check-input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+            }
+
+            .custom-checkbox .form-check-label {
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="container header-content">
+                <div class="d-flex align-items-center">
+                    <i
+                        class="bi bi-file-earmark-text me-2"
+                        style="font-size: 1.75rem"
+                    ></i>
+                    <div class="header-title">
+                        고등학교 수학 평가도구 제작기
+                    </div>
+                </div>
+                <div>
+                    <button
+                        class="btn btn-outline-light btn-pill"
+                        type="button"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#historyOffcanvas"
+                    >
+                        <i class="bi bi-clock-history me-1"></i> 저장된 평가
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <!-- 평가 기본 정보 카드 -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="section-title">평가 기본 정보</h5>
+
+                            <div class="mb-3">
+                                <label class="form-label">학교급</label>
+                                <div class="form-control bg-light">
+                                    고등학교
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">과목</label>
+                                <div class="form-control bg-light">
+                                    공통수학
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">학년군</label>
+                                <div class="form-control bg-light">1학년군</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">영역</label>
+                                <div class="form-control bg-light">다항식</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">성취기준</label>
+                                <div class="standard-item p-3 selected">
+                                    <div class="standard-id mb-1">
+                                        [10공수1-01-01]
+                                    </div>
+                                    <div>
+                                        다항식의 사칙연산의 원리를 설명하고, 그
+                                        계산을 할 수 있다.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 성취수준 카드 -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="section-title">성취수준</h5>
+
+                            <div class="mb-3">
+                                <div
+                                    class="d-flex justify-content-between align-items-center mb-3"
+                                >
+                                    <label class="form-label mb-0"
+                                        >성취수준 선택</label
+                                    >
+                                    <div class="d-flex gap-2">
+                                        <div class="level-option">B</div>
+                                        <div class="level-option">C</div>
+                                        <div class="level-option">D</div>
+                                        <div class="level-option">E</div>
+                                        <div class="level-option selected">
+                                            A
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="achievement-level level-a">
+                                <div class="fw-semibold mb-1">A 수준</div>
+                                <div>
+                                    다항식의 사칙연산의 원리를 이해하여 설명할
+                                    수 있으며, 그 계산을 수학적 절차에 따라
+                                    체계적으로 수행할 수 있다.
+                                </div>
+                            </div>
+
+                            <div class="achievement-level level-b">
+                                <div class="fw-semibold mb-1">B 수준</div>
+                                <div>
+                                    다항식의 사칙연산의 원리를 이해하여 설명할
+                                    수 있으며, 그 계산을 할 수 있다.
+                                </div>
+                            </div>
+
+                            <div class="achievement-level level-c">
+                                <div class="fw-semibold mb-1">C 수준</div>
+                                <div>
+                                    다항식의 사칙연산의 원리를 이해하고, 그
+                                    계산을 할 수 있다.
+                                </div>
+                            </div>
+
+                            <div class="achievement-level level-d">
+                                <div class="fw-semibold mb-1">D 수준</div>
+                                <div>
+                                    다항식의 사칙연산의 원리를 알고, 간단한
+                                    다항식의 계산을 할 수 있다.
+                                </div>
+                            </div>
+
+                            <div class="achievement-level level-e">
+                                <div class="fw-semibold mb-1">E 수준</div>
+                                <div>
+                                    안내된 절차에 따라 간단한 다항식의
+                                    사칙연산을 할 수 있다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <!-- 평가 세부 설정 카드 -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="section-title">평가 세부 설정</h5>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">평가 요소</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        value="다항식의 사칙연산의 원리를 이용하는 문제 해결하기"
+                                        readonly
+                                    />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label"
+                                        >평가 도구 유형</label
+                                    >
+                                    <select class="form-select">
+                                        <option>객관식</option>
+                                        <option>주관식</option>
+                                        <option selected>서·논술형</option>
+                                        <option>수행평가</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label"
+                                        >성취수준 범위</label
+                                    >
+                                    <select class="form-select">
+                                        <option>A</option>
+                                        <option>A~B</option>
+                                        <option selected>A~C</option>
+                                        <option>A~D</option>
+                                        <option>A~E</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">배점</label>
+                                    <div class="input-group">
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            value="13"
+                                        />
+                                        <span class="input-group-text">점</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label"
+                                        >개발 방향 및 활용 시 고려사항</label
+                                    >
+                                    <textarea class="form-control" rows="3">
+∙ 다항식의 사칙연산의 원리를 이해하고, 관련된 문제를 해결할 수 있는지를 평가하기 위한 문항이다. 
+∙ 성취수준 A~C를 고려하여 출제한 문항으로 이 문항을 맞힌 번호 및 개수에 따라 다항식의 사칙연산의 원리를 알거나 이해하고 관련된 문제를 해결할 수 있는지를 판단할 수 있다.</textarea
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 평가 문항 형태 선택 -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="section-title">평가 문항 형태 선택</h5>
+
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div
+                                        class="card evaluation-card shadow-sm text-center p-4 selected"
+                                    >
+                                        <div class="mb-3">
+                                            <i
+                                                class="bi bi-journal-text"
+                                                style="
+                                                    font-size: 2.5rem;
+                                                    color: var(--primary);
+                                                "
+                                            ></i>
+                                        </div>
+                                        <h6 class="card-title">기본형</h6>
+                                        <div class="small text-muted">
+                                            표준적인 서·논술형 평가
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div
+                                        class="card evaluation-card shadow-sm text-center p-4"
+                                    >
+                                        <div class="mb-3">
+                                            <i
+                                                class="bi bi-grid-1x2"
+                                                style="
+                                                    font-size: 2.5rem;
+                                                    color: var(--secondary);
+                                                "
+                                            ></i>
+                                        </div>
+                                        <h6 class="card-title">하위 문항형</h6>
+                                        <div class="small text-muted">
+                                            여러 단계로 나누어 출제
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div
+                                        class="card evaluation-card shadow-sm text-center p-4"
+                                    >
+                                        <div class="mb-3">
+                                            <i
+                                                class="bi bi-file-earmark-richtext"
+                                                style="
+                                                    font-size: 2.5rem;
+                                                    color: var(--accent);
+                                                "
+                                            ></i>
+                                        </div>
+                                        <h6 class="card-title">제시문형</h6>
+                                        <div class="small text-muted">
+                                            제시문 기반 서·논술형
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 문항 상세 설정 -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="section-title">문항 상세 설정</h5>
+
+                            <div class="mb-3">
+                                <label class="form-label">문항 주제</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="예: 다항식의 사칙연산 활용 문제"
+                                    value="다항식의 덧셈과 곱셈의 원리를 활용한 문제"
+                                />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">문항 난이도</label>
+                                <select class="form-select">
+                                    <option>상</option>
+                                    <option selected>중상</option>
+                                    <option>중</option>
+                                    <option>중하</option>
+                                    <option>하</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">출제 조건</label>
+                                <div class="form-check mb-2 custom-checkbox">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="check1"
+                                        checked
+                                    />
+                                    <label
+                                        class="form-check-label"
+                                        for="check1"
+                                    >
+                                        다항식의 사칙연산 원리 설명 요구
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2 custom-checkbox">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="check2"
+                                        checked
+                                    />
+                                    <label
+                                        class="form-check-label"
+                                        for="check2"
+                                    >
+                                        계산 과정 단계별 기술 필요
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2 custom-checkbox">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="check3"
+                                        checked
+                                    />
+                                    <label
+                                        class="form-check-label"
+                                        for="check3"
+                                    >
+                                        실생활 연계 문제 상황 제시
+                                    </label>
+                                </div>
+                                <div class="form-check custom-checkbox">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="check4"
+                                    />
+                                    <label
+                                        class="form-check-label"
+                                        for="check4"
+                                    >
+                                        그래프나 도표 분석 활용
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">추가 요청사항</label>
+                                <textarea
+                                    class="form-control"
+                                    rows="3"
+                                    placeholder="문항 생성 시 특별히 고려할 요소를 입력하세요."
+                                >
+다항식의 덧셈과 곱셈의 원리를 모두 설명하도록 하고, 그 원리를 활용하여 복잡한 식을 간단히 정리하는 과정을 요구하는 문항으로 출제</textarea
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI 생성 상태 표시 -->
+                    <div class="ai-thinking p-3 d-flex align-items-center mb-4">
+                        <div class="me-3">
+                            <div class="dot-typing"></div>
+                        </div>
+                        <div>
+                            <div class="fw-semibold">
+                                AI가 문항을 생성 중입니다...
+                            </div>
+                            <div class="small text-muted">
+                                다항식의 사칙연산 원리를 활용한 서·논술형 평가
+                                문항을 생성하고 있습니다.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 생성된 평가 문항 -->
+                    <div class="card mb-4">
+                        <div
+                            class="card-header bg-white d-flex justify-content-between align-items-center py-3"
+                        >
+                            <h5 class="mb-0">생성된 평가 문항</h5>
+                            <div>
+                                <button
+                                    class="btn btn-sm btn-outline-primary rounded-pill"
+                                >
+                                    <i class="bi bi-arrow-repeat me-1"></i>
+                                    재생성
+                                </button>
+                                <button
+                                    class="btn btn-sm btn-outline-primary rounded-pill ms-2"
+                                >
+                                    <i class="bi bi-download me-1"></i> 내보내기
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">문항</h6>
+                                <div class="border rounded p-3 mb-3 bg-light">
+                                    <p class="mb-2">
+                                        다음은 다항식의 연산에 관한 문제입니다.
+                                        물음에 답하시오. (13점)
+                                    </p>
+                                    <p>
+                                        세 다항식 A(x) = x<sup>2</sup> - 2x + 3,
+                                        B(x) = 2x<sup>2</sup> - x - 1, C(x) =
+                                        x<sup>2</sup> + 2x - 2가 있다.
+                                    </p>
+                                    <ol>
+                                        <li class="mb-2">
+                                            다항식의 덧셈과 곱셈의 원리를 각각
+                                            설명하시오. (5점)
+                                        </li>
+                                        <li class="mb-2">
+                                            D(x) = A(x) + B(x) - C(x)를
+                                            계산하시오. (3점)
+                                        </li>
+                                        <li class="mb-2">
+                                            E(x) = A(x) × B(x)를 계산하고, 그
+                                            과정을 단계별로 설명하시오. (5점)
+                                        </li>
+                                    </ol>
+                                </div>
+
+                                <h6 class="fw-bold mb-3">예시 답안</h6>
+                                <div class="border rounded p-3 mb-3">
+                                    <ol>
+                                        <li class="mb-3">
+                                            <p class="mb-1">
+                                                <strong
+                                                    >다항식의 덧셈과 곱셈의 원리
+                                                    설명</strong
+                                                >
+                                            </p>
+                                            <p class="mb-1">
+                                                <u>다항식의 덧셈의 원리:</u>
+                                                다항식의 덧셈은 동류항끼리
+                                                더하는 연산이다. 두 다항식의
+                                                같은 차수를 가진 항들을 서로
+                                                더하여 결과를 얻는다. 이는
+                                                덧셈의 교환법칙과 결합법칙을
+                                                따른다.
+                                            </p>
+                                            <p>
+                                                <u>다항식의 곱셈의 원리:</u>
+                                                다항식의 곱셈은 한 다항식의 각
+                                                항을 다른 다항식의 각 항과 곱한
+                                                후, 그 결과를 모두 더하는
+                                                연산이다. 이는 분배법칙에
+                                                근거하며,
+                                                지수법칙(a<sup>m</sup>×a<sup>n</sup>=a<sup>m+n</sup>)을
+                                                적용하여 동류항을 정리한다.
+                                            </p>
+                                        </li>
+                                        <li class="mb-3">
+                                            <p class="mb-1">
+                                                <strong
+                                                    >D(x) = A(x) + B(x) - C(x)의
+                                                    계산</strong
+                                                >
+                                            </p>
+                                            <p class="mb-1">
+                                                D(x) = A(x) + B(x) - C(x)
+                                            </p>
+                                            <p class="mb-1">
+                                                = (x<sup>2</sup> - 2x + 3) +
+                                                (2x<sup>2</sup> - x - 1) -
+                                                (x<sup>2</sup> + 2x - 2)
+                                            </p>
+                                            <p class="mb-1">
+                                                = x<sup>2</sup> - 2x + 3 +
+                                                2x<sup>2</sup> - x - 1 - x<sup
+                                                    >2</sup
+                                                >
+                                                - 2x + 2
+                                            </p>
+                                            <p class="mb-1">
+                                                = (x<sup>2</sup> + 2x<sup
+                                                    >2</sup
+                                                >
+                                                - x<sup>2</sup>) + (-2x - x -
+                                                2x) + (3 - 1 + 2)
+                                            </p>
+                                            <p>= 2x<sup>2</sup> - 5x + 4</p>
+                                        </li>
+                                        <li>
+                                            <p class="mb-1">
+                                                <strong
+                                                    >E(x) = A(x) × B(x)의
+                                                    계산</strong
+                                                >
+                                            </p>
+                                            <p class="mb-1">
+                                                E(x) = A(x) × B(x)
+                                            </p>
+                                            <p class="mb-1">
+                                                = (x<sup>2</sup> - 2x + 3) ×
+                                                (2x<sup>2</sup> - x - 1)
+                                            </p>
+                                            <p class="mb-1">
+                                                <u>1단계:</u> A(x)의 첫 번째 항
+                                                x<sup>2</sup>와 B(x)의 각 항을
+                                                곱한다.
+                                            </p>
+                                            <p class="mb-1">
+                                                x<sup>2</sup> × (2x<sup>2</sup>
+                                                - x - 1) = 2x<sup>4</sup> -
+                                                x<sup>3</sup> - x<sup>2</sup>
+                                            </p>
+                                            <p class="mb-1">
+                                                <u>2단계:</u> A(x)의 두 번째 항
+                                                -2x와 B(x)의 각 항을 곱한다.
+                                            </p>
+                                            <p class="mb-1">
+                                                -2x × (2x<sup>2</sup> - x - 1) =
+                                                -4x<sup>3</sup> + 2x<sup>2</sup>
+                                                + 2x
+                                            </p>
+                                            <p class="mb-1">
+                                                <u>3단계:</u> A(x)의 세 번째 항
+                                                3과 B(x)의 각 항을 곱한다.
+                                            </p>
+                                            <p class="mb-1">
+                                                3 × (2x<sup>2</sup> - x - 1) =
+                                                6x<sup>2</sup> - 3x - 3
+                                            </p>
+                                            <p class="mb-1">
+                                                <u>4단계:</u> 모든 결과를 더하고
+                                                동류항을 정리한다.
+                                            </p>
+                                            <p class="mb-1">
+                                                E(x) = 2x<sup>4</sup> - x<sup
+                                                    >3</sup
+                                                >
+                                                - x<sup>2</sup> + (-4x<sup
+                                                    >3</sup
+                                                >
+                                                + 2x<sup>2</sup> + 2x) + (6x<sup
+                                                    >2</sup
+                                                >
+                                                - 3x - 3)
+                                            </p>
+                                            <p class="mb-1">
+                                                = 2x<sup>4</sup> + (-x<sup
+                                                    >3</sup
+                                                >
+                                                - 4x<sup>3</sup>) + (-x<sup
+                                                    >2</sup
+                                                >
+                                                + 2x<sup>2</sup> +
+                                                6x<sup>2</sup>) + (2x - 3x) +
+                                                (-3)
+                                            </p>
+                                            <p>
+                                                = 2x<sup>4</sup> - 5x<sup
+                                                    >3</sup
+                                                >
+                                                + 7x<sup>2</sup> - x - 3
+                                            </p>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-primary btn-pill">
+                                    <i class="bi bi-check2-circle me-1"></i>
+                                    평가 문항 확정
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 오프캔버스 - 저장된 평가 -->
+        <div
+            class="offcanvas offcanvas-end"
+            tabindex="-1"
+            id="historyOffcanvas"
+            aria-labelledby="historyOffcanvasLabel"
+        >
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="historyOffcanvasLabel">
+                    저장된 평가
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close text-reset"
+                    data-bs-dismiss="offcanvas"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="list-group">
+                    <a
+                        href="#"
+                        class="list-group-item list-group-item-action active"
+                        aria-current="true"
+                    >
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">다항식의 사칙연산 평가</h6>
+                            <small>방금 전</small>
+                        </div>
+                        <p class="mb-1 small">
+                            다항식의 덧셈과 곱셈의 원리를 활용한 문제
+                        </p>
+                        <small>서·논술형 / 13점</small>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">다항식의 인수분해 평가</h6>
+                            <small>3일 전</small>
+                        </div>
+                        <p class="mb-1 small">
+                            인수분해 공식을 활용한 복합 문제
+                        </p>
+                        <small>혼합형 / 20점</small>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">이차방정식 문제해결 평가</h6>
+                            <small>1주일 전</small>
+                        </div>
+                        <p class="mb-1 small">
+                            실생활 연계 이차방정식 문제해결
+                        </p>
+                        <small>객관식 / 25점</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // 간단한 상호작용 기능
+            document.addEventListener("DOMContentLoaded", function () {
+                // 성취수준 선택
+                const levelOptions = document.querySelectorAll(".level-option");
+                levelOptions.forEach((option) => {
+                    option.addEventListener("click", function () {
+                        levelOptions.forEach((opt) =>
+                            opt.classList.remove("selected")
+                        );
+                        this.classList.add("selected");
+                    });
+                });
+
+                // 평가 문항 형태 선택
+                const evaluationCards =
+                    document.querySelectorAll(".evaluation-card");
+                evaluationCards.forEach((card) => {
+                    card.addEventListener("click", function () {
+                        evaluationCards.forEach((c) =>
+                            c.classList.remove("selected")
+                        );
+                        this.classList.add("selected");
+                    });
+                });
+
+                // 생성 버튼 클릭 시 로딩 상태 토글
+                const generateBtn = document.querySelector(
+                    ".btn-primary.btn-pill"
+                );
+                if (generateBtn) {
+                    generateBtn.addEventListener("click", function () {
+                        const aiThinking =
+                            document.querySelector(".ai-thinking");
+                        if (aiThinking) {
+                            aiThinking.style.display =
+                                aiThinking.style.display === "none"
+                                    ? "flex"
+                                    : "none";
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

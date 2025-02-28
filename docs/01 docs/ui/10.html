@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AI 기반 수학 평가도구 제작기</title>
+        <style>
+            :root {
+                --primary: #4263eb;
+                --primary-light: #5c7cfa;
+                --primary-dark: #364fc7;
+                --secondary: #22b8cf;
+                --accent: #f03e3e;
+                --success: #37b24d;
+                --warning: #f59f00;
+                --danger: #e03131;
+                --light: #f8f9fa;
+                --dark: #212529;
+                --gray: #adb5bd;
+                --white: #ffffff;
+                --border-radius: 0.5rem;
+                --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                --transition: all 0.3s ease;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Pretendard", "Noto Sans KR", sans-serif;
+                line-height: 1.6;
+                color: var(--dark);
+                background-color: #f1f5f9;
+            }
+
+            header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary-dark)
+                );
+                color: white;
+                padding: 1.5rem 0;
+                box-shadow: var(--box-shadow);
+            }
+
+            .header-content {
+                max-width: 1280px;
+                margin: 0 auto;
+                padding: 0 1.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .app-title {
+                font-size: 1.8rem;
+                font-weight: 700;
+            }
+
+            .user-profile {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: var(--primary-dark);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+            }
+
+            main {
+                max-width: 1280px;
+                margin: 2rem auto;
+                padding: 0 1.5rem;
+            }
+
+            .dashboard {
+                display: grid;
+                grid-template-columns: 350px 1fr;
+                gap: 2rem;
+            }
+
+            .card {
+                background-color: white;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                overflow: hidden;
+                margin-bottom: 2rem;
+            }
+
+            .card-header {
+                padding: 1.5rem;
+                border-bottom: 1px solid #e2e8f0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .card-tools {
+                display: flex;
+                gap: 0.8rem;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .btn {
+                display: inline-block;
+                padding: 0.6rem 1.2rem;
+                background-color: var(--primary);
+                color: white;
+                border: none;
+                border-radius: var(--border-radius);
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 0.95rem;
+                text-align: center;
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+            .btn:hover {
+                background-color: var(--primary-dark);
+            }
+
+            .btn-outline {
+                background-color: transparent;
+                border: 1px solid var(--primary);
+                color: var(--primary);
+            }
+
+            .btn-outline:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .btn-success {
+                background-color: var(--success);
+            }
+
+            .btn-success:hover {
+                background-color: #2f9e44;
+            }
+
+            .btn-warning {
+                background-color: var(--warning);
+            }
+
+            .btn-warning:hover {
+                background-color: #e67700;
+            }
+
+            .btn-danger {
+                background-color: var(--danger);
+            }
+
+            .btn-danger:hover {
+                background-color: #c92a2a;
+            }
+
+            .btn-block {
+                display: block;
+                width: 100%;
+            }
+
+            .form-group {
+                margin-bottom: 1.2rem;
+            }
+
+            .form-label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+            }
+
+            .form-select,
+            .form-input {
+                width: 100%;
+                padding: 0.6rem;
+                border: 1px solid #e2e8f0;
+                border-radius: var(--border-radius);
+                font-size: 0.95rem;
+                transition: var(--transition);
+            }
+
+            .form-select:focus,
+            .form-input:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(66, 99, 235, 0.2);
+            }
+
+            .form-textarea {
+                width: 100%;
+                padding: 0.6rem;
+                border: 1px solid #e2e8f0;
+                border-radius: var(--border-radius);
+                font-size: 0.95rem;
+                min-height: 100px;
+                resize: vertical;
+                transition: var(--transition);
+            }
+
+            .form-textarea:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(66, 99, 235, 0.2);
+            }
+
+            .tabs {
+                display: flex;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .tab {
+                padding: 1rem 1.5rem;
+                cursor: pointer;
+                transition: var(--transition);
+                border-bottom: 3px solid transparent;
+                font-weight: 500;
+            }
+
+            .tab.active {
+                border-bottom-color: var(--primary);
+                color: var(--primary);
+            }
+
+            .tab:hover {
+                background-color: var(--light);
+            }
+
+            .assessment-preview {
+                margin-top: 1.5rem;
+                border: 1px solid #e2e8f0;
+                border-radius: var(--border-radius);
+                overflow: hidden;
+            }
+
+            .preview-header {
+                padding: 1rem;
+                background-color: var(--light);
+                border-bottom: 1px solid #e2e8f0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .preview-title {
+                font-weight: 600;
+            }
+
+            .preview-body {
+                padding: 1.5rem;
+                min-height: 300px;
+                max-height: 600px;
+                overflow-y: auto;
+            }
+
+            .question-list {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+                margin-top: 1.5rem;
+            }
+
+            .question-item {
+                border: 1px solid #e2e8f0;
+                border-radius: var(--border-radius);
+                padding: 1.5rem;
+                background-color: white;
+            }
+
+            .question-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 1rem;
+            }
+
+            .question-number {
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .question-type {
+                font-size: 0.85rem;
+                padding: 0.2rem 0.6rem;
+                background-color: rgba(66, 99, 235, 0.1);
+                border-radius: 20px;
+                color: var(--primary);
+            }
+
+            .question-content {
+                margin-bottom: 1.5rem;
+            }
+
+            .options-list {
+                list-style-type: none;
+                margin-left: 1rem;
+            }
+
+            .option-item {
+                margin-bottom: 0.8rem;
+                padding-left: 1.5rem;
+                position: relative;
+            }
+
+            .option-item::before {
+                content: attr(data-index);
+                position: absolute;
+                left: 0;
+                font-weight: 600;
+            }
+
+            .question-actions {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 1.5rem;
+                padding-top: 1rem;
+                border-top: 1px solid #e2e8f0;
+            }
+
+            .question-meta {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .question-difficulty {
+                font-size: 0.85rem;
+                padding: 0.2rem 0.6rem;
+                border-radius: 20px;
+                background-color: rgba(241, 196, 15, 0.1);
+                color: #f59f00;
+            }
+
+            .question-score {
+                font-size: 0.85rem;
+                padding: 0.2rem 0.6rem;
+                border-radius: 20px;
+                background-color: rgba(46, 204, 113, 0.1);
+                color: #37b24d;
+            }
+
+            .question-buttons {
+                display: flex;
+                gap: 0.8rem;
+            }
+
+            .checkbox-group {
+                margin-top: 0.8rem;
+            }
+
+            .checkbox-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 0.5rem;
+            }
+
+            .checkbox-input {
+                margin-right: 0.5rem;
+            }
+
+            .standard-selector {
+                margin-top: 1.5rem;
+            }
+
+            .standard-title {
+                font-weight: 600;
+                margin-bottom: 1rem;
+                color: var(--primary);
+            }
+
+            .standard-list {
+                max-height: 250px;
+                overflow-y: auto;
+                border: 1px solid #e2e8f0;
+                border-radius: var(--border-radius);
+            }
+
+            .standard-item {
+                padding: 0.8rem;
+                border-bottom: 1px solid #e2e8f0;
+                display: flex;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+
+            .standard-item:last-child {
+                border-bottom: none;
+            }
+
+            .standard-checkbox {
+                margin-top: 0.2rem;
+            }
+
+            .standard-id {
+                font-weight: 600;
+                color: var(--primary);
+                margin-bottom: 0.3rem;
+            }
+
+            .standard-content {
+                font-size: 0.95rem;
+            }
+
+            .level-selector {
+                margin-top: 1.5rem;
+            }
+
+            .level-title {
+                font-weight: 600;
+                margin-bottom: 1rem;
+                color: var(--primary);
+            }
+
+            .level-options {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .level-option {
+                flex: 1;
+                padding: 0.6rem 0;
+                text-align: center;
+                border: 1px solid #e2e8f0;
+                border-radius: var(--border-radius);
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .level-option:hover {
+                border-color: var(--primary-light);
+                background-color: rgba(66, 99, 235, 0.05);
+            }
+
+            .level-option.selected {
+                border-color: var(--primary);
+                background-color: rgba(66, 99, 235, 0.1);
+                color: var(--primary);
+                font-weight: 500;
+            }
+
+            .level-description {
+                margin-top: 1rem;
+                padding: 1rem;
+                background-color: var(--light);
+                border-radius: var(--border-radius);
+                font-size: 0.95rem;
+            }
+
+            .generation-result {
+                margin-top: 1.5rem;
+            }
+
+            .result-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+
+            .result-title {
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .result-actions {
+                display: flex;
+                gap: 0.8rem;
+            }
+
+            .tag-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-top: 0.8rem;
+            }
+
+            .tag {
+                padding: 0.3rem 0.6rem;
+                background-color: rgba(66, 99, 235, 0.1);
+                color: var(--primary);
+                border-radius: 20px;
+                font-size: 0.85rem;
+            }
+
+            .preview-controls {
+                display: flex;
+                justify-content: flex-end;
+                gap: 0.8rem;
+                margin-top: 1.5rem;
+            }
+
+            .badge {
+                display: inline-block;
+                padding: 0.25rem 0.5rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 500;
+            }
+
+            .badge-primary {
+                background-color: rgba(66, 99, 235, 0.1);
+                color: var(--primary);
+            }
+
+            .badge-success {
+                background-color: rgba(55, 178, 77, 0.1);
+                color: var(--success);
+            }
+
+            .badge-warning {
+                background-color: rgba(245, 159, 0, 0.1);
+                color: var(--warning);
+            }
+
+            .badge-danger {
+                background-color: rgba(224, 49, 49, 0.1);
+                color: var(--danger);
+            }
+
+            .loading-indicator {
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+                padding: 1rem;
+                background-color: var(--light);
+                border-radius: var(--border-radius);
+                margin-top: 1.5rem;
+            }
+
+            .loading-spinner {
+                width: 24px;
+                height: 24px;
+                border: 3px solid rgba(66, 99, 235, 0.2);
+                border-top: 3px solid var(--primary);
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .loading-message {
+                font-weight: 500;
+            }
+
+            @media (max-width: 992px) {
+                .dashboard {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="header-content">
+                <h1 class="app-title">AI 기반 수학 평가도구 제작기</h1>
+                <div class="user-profile">
+                    <div class="user-avatar">KJ</div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="dashboard">
+                <!-- 좌측 설정 패널 -->
+                <div class="sidebar">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">평가 문항 생성 설정</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">평가 유형</label>
+                                <select class="form-select">
+                                    <option>단원 평가</option>
+                                    <option>형성 평가</option>
+                                    <option>진단 평가</option>
+                                    <option>수행 평가</option>
+                                    <option>심화 문제</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label"
+                                    >학교급 / 학년군</label
+                                >
+                                <select class="form-select">
+                                    <option>초등학교 1-2학년군</option>
+                                    <option>초등학교 3-4학년군</option>
+                                    <option>초등학교 5-6학년군</option>
+                                    <option>중학교 1-3학년군</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">교육과정 영역</label>
+                                <select class="form-select">
+                                    <option>수와 연산</option>
+                                    <option>변화와 관계</option>
+                                    <option>도형과 측정</option>
+                                    <option>자료와 가능성</option>
+                                </select>
+                            </div>
+
+                            <div class="standard-selector">
+                                <div class="standard-title">성취기준 선택</div>
+                                <div class="standard-list">
+                                    <div class="standard-item">
+                                        <input
+                                            type="checkbox"
+                                            class="standard-checkbox"
+                                            checked
+                                        />
+                                        <div>
+                                            <div class="standard-id">
+                                                2수01-01
+                                            </div>
+                                            <div class="standard-content">
+                                                수의 필요성을 인식하면서 0과
+                                                100까지의 수 개념을 이해하고,
+                                                수를 세고 읽고 쓸 수 있다.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="standard-item">
+                                        <input
+                                            type="checkbox"
+                                            class="standard-checkbox"
+                                            checked
+                                        />
+                                        <div>
+                                            <div class="standard-id">
+                                                2수01-02
+                                            </div>
+                                            <div class="standard-content">
+                                                일, 십, 백, 천의 자릿값과 위치적
+                                                기수법을 이해하고, 네 자리
+                                                이하의 수를 읽고 쓸 수 있다.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="standard-item">
+                                        <input
+                                            type="checkbox"
+                                            class="standard-checkbox"
+                                        />
+                                        <div>
+                                            <div class="standard-id">
+                                                2수01-03
+                                            </div>
+                                            <div class="standard-content">
+                                                네 자리 이하의 수의 범위에서
+                                                수의 계열을 이해하고, 수의
+                                                크기를 비교할 수 있다.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="standard-item">
+                                        <input
+                                            type="checkbox"
+                                            class="standard-checkbox"
+                                        />
+                                        <div>
+                                            <div class="standard-id">
+                                                2수01-04
+                                            </div>
+                                            <div class="standard-content">
+                                                하나의 수를 두 수로 분해하고 두
+                                                수를 하나의 수로 합성하는 활동을
+                                                통하여 수 감각을 기른다.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="level-selector">
+                                <div class="level-title">성취수준 선택</div>
+                                <div class="level-options">
+                                    <div class="level-option">A</div>
+                                    <div class="level-option selected">B</div>
+                                    <div class="level-option">C</div>
+                                    <div class="level-option">D</div>
+                                    <div class="level-option">E</div>
+                                </div>
+                                <div class="level-description">
+                                    <strong>B 수준:</strong> 수의 필요성을
+                                    인식하고, 0과 100까지의 수 개념을 이해하며,
+                                    수를 정확하게 세고 읽고 쓸 수 있다.
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 1.5rem">
+                                <label class="form-label">문항 유형</label>
+                                <select class="form-select">
+                                    <option>객관식</option>
+                                    <option>주관식</option>
+                                    <option>서술형</option>
+                                    <option>혼합형</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">문항 수</label>
+                                <select class="form-select">
+                                    <option>5문항</option>
+                                    <option>10문항</option>
+                                    <option>15문항</option>
+                                    <option>20문항</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">난이도 분포</label>
+                                <select class="form-select">
+                                    <option>
+                                        표준 분포 (상:중:하 = 2:5:3)
+                                    </option>
+                                    <option>
+                                        쉬운 난이도 (상:중:하 = 1:4:5)
+                                    </option>
+                                    <option>
+                                        어려운 난이도 (상:중:하 = 4:4:2)
+                                    </option>
+                                    <option>
+                                        균등 분포 (상:중:하 = 1:1:1)
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">추가 요청사항</label>
+                                <textarea
+                                    class="form-textarea"
+                                    placeholder="특별히 반영하고 싶은 문제 유형, 실생활 소재 등을 입력하세요."
+                                ></textarea>
+                            </div>
+
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input
+                                        type="checkbox"
+                                        id="include-image"
+                                        class="checkbox-input"
+                                        checked
+                                    />
+                                    <label for="include-image"
+                                        >시각 자료 포함</label
+                                    >
+                                </div>
+                                <div class="checkbox-item">
+                                    <input
+                                        type="checkbox"
+                                        id="include-answer"
+                                        class="checkbox-input"
+                                        checked
+                                    />
+                                    <label for="include-answer"
+                                        >정답 및 해설 포함</label
+                                    >
+                                </div>
+                                <div class="checkbox-item">
+                                    <input
+                                        type="checkbox"
+                                        id="real-context"
+                                        class="checkbox-input"
+                                        checked
+                                    />
+                                    <label for="real-context"
+                                        >실생활 맥락 활용</label
+                                    >
+                                </div>
+                            </div>
+
+                            <button
+                                class="btn btn-block"
+                                style="margin-top: 1.5rem"
+                            >
+                                평가 문항 생성하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 우측 미리보기 패널 -->
+                <div class="content">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">생성된 평가 문항</div>
+                            <div class="card-tools">
+                                <button class="btn btn-outline">
+                                    문항 수정
+                                </button>
+                                <button class="btn">내보내기</button>
+                            </div>
+                        </div>
+                        <div class="tabs">
+                            <div class="tab active">문항 보기</div>
+                            <div class="tab">학생용 시험지</div>
+                            <div class="tab">교사용 정답지</div>
+                            <div class="tab">분석</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="generation-result">
+                                <div class="result-header">
+                                    <div class="result-title">
+                                        수와 연산 단원 평가
+                                    </div>
+                                    <div class="result-actions">
+                                        <button class="btn btn-outline">
+                                            다시 생성
+                                        </button>
+                                        <button class="btn">문항 추가</button>
+                                    </div>
+                                </div>
+                                <div class="tag-list">
+                                    <span class="tag">초등 1-2학년</span>
+                                    <span class="tag">수와 연산</span>
+                                    <span class="tag">2수01-01</span>
+                                    <span class="tag">2수01-02</span>
+                                    <span class="tag">객관식</span>
+                                    <span class="tag">B수준</span>
+                                </div>
+                            </div>
+
+                            <div class="question-list">
+                                <div class="question-item">
+                                    <div class="question-header">
+                                        <div class="question-number">
+                                            문항 1
+                                        </div>
+                                        <div class="question-type">객관식</div>
+                                    </div>
+                                    <div class="question-content">
+                                        <p>
+                                            다음 중 숫자 78을 바르게 읽은 것은
+                                            무엇인가요?
+                                        </p>
+                                        <ul class="options-list">
+                                            <li
+                                                class="option-item"
+                                                data-index="①"
+                                            >
+                                                일흔여덟
+                                            </li>
+                                            <li
+                                                class="option-item"
+                                                data-index="②"
+                                            >
+                                                여든여덟
+                                            </li>
+                                            <li
+                                                class="option-item"
+                                                data-index="③"
+                                            >
+                                                칠십팔
+                                            </li>
+                                            <li
+                                                class="option-item"
+                                                data-index="④"
+                                            >
+                                                팔십칠
+                                            </li>
+                                            <li
+                                                class="option-item"
+                                                data-index="⑤"
+                                            >
+                                                칠팔
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="question-actions">
+                                        <div class="question-meta">
+                                            <div class="question-difficulty">
+                                                난이도: 하
+                                            </div>
+                                            <div class="question-score">
+                                                배점: 1점
+                                            </div>
+                                            <div class="badge badge-primary">
+                                                2수01-01
+                                            </div>
+                                        </div>
+                                        <div class="question-buttons">
+                                            <button class="btn btn-outline">
+                                                수정
+                                            </button>
+                                            <button class="btn btn-outline">
+                                                대체
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="question-item">
+                                    <div class="question-header">
+                                        <div class="question-number">
+                                            문항 2
+                                        </div>
+                                        <div class="question-type">객관식</div>
+                                    </div>
+                                    <div class="question-content">
+                                        <p>
+                                            수 카드를 사용하여 두 자리 수를
+                                            만들려고 합니다. 다음 중 가장 큰
+                                            수를 만드는 방법은 무엇인가요?
+                                        </p>
+                                        <div
+                                            style="
+                                                background-color: #f8f9fa;
+                                                padding: 1rem;
+                                                border-radius: 0.5rem;
+                                                margin: 1rem 0;
+                                                text-align: center;
+                                            "
+                                        >
+                                            [수 카드 이미지: 3, 5, 7, 9]
+                                        </div>
+                                        <ul class="options-list">
+                                            <li
+                                                class="option-item"
+                                                data-index="①"
+                                            >
+                                                3과 5를 사용하여 53
+                                            </li>
+                                            <li
+                                                class="option-item"
+                                                data-index="②"
+                                            >
+                                                3과 7을 사용하여 73
+                                            </li>
+                                            <li
+                                                class="option-item"
+                                                data-index="③"
+                                            >
+                                                5와 7을 사용하여 75
+                                            </li>
+                                            <li
+                                                class="option-item"
+                                                data-index="④"
+                                            >
+                                                5와 9를 사용하여 59
+                                            </li>
+                                            <li
+                                                class="option-item"
+                                                data-index="⑤"
+                                            >
+                                                7과 9를 사용하여 97
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="question-actions">
+                                        <div class="question-meta">
+                                            <div class="question-difficulty">
+                                                난이도: 중
+                                            </div>
+                                            <div class="question-score">
+                                                배점: 1점
+                                            </div>
+                                            <div class="badge badge-primary">
+                                                2수01-02
+                                            </div>
+                                        </div>
+                                        <div class="question-buttons">
+                                            <button class="btn btn-outline">
+                                                수정
+                                            </button>
+                                            <button class="btn btn-outline">
+                                                대체
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="question-item">
+                                    <div class="question-header">
+                                        <div class="question-number">
+                                            문항 3
+                                        </div>
+                                        <div class="question-type">객관식</div>
+                                    </div>
+                                    <div class="question-content">
+                                        <p>
+                                            민수네 학급에는 학생들이 모두 26명
+                                            있습니다. 오늘 4명이 결석했다면 몇
+                                            명이 학교에 왔나요?
+                                        </p>
+                                        <ul class="options-list">
+                                            <li
+                                                class="option-item"
+                                                data-index="①"
+                                            >
+                                                20명
+                                            </li>
+                                            <li
+                                                class="option-item"
+                                                data-index="②"
+                                            >
+                                                21명
+                                            </li>
+                                            <li
+                                                class="option-item"
+                                                data-index="③"
+                                            >
+                                                22명
+                                            </li>
+                                            <li
+                                                class="option-item"
+                                                data-index="④"
+                                            >
+                                                23명
+                                            </li>
+                                            <li
+                                                class="option-item"
+                                                data-index="⑤"
+                                            >
+                                                24명
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="question-actions">
+                                        <div class="question-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

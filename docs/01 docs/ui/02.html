@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수학 커리큘럼 설계 도우미</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --primary-dark: #2563eb;
+            --primary-light: #60a5fa;
+            --secondary: #4361ee;
+            --accent: #4cc9f0;
+            --success: #06d6a0;
+            --warning: #ff9f1c;
+            --danger: #ef476f;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --border-radius: 0.75rem;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f5f7fb;
+        }
+
+        /* Mobile friendly header */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            box-shadow: var(--box-shadow);
+        }
+
+        .app-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        /* Main containers */
+        .content-container {
+            padding-bottom: 4rem;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 72px;
+            height: calc(100vh - 72px);
+            overflow-y: auto;
+        }
+
+        /* Cards and panels */
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+            position: relative;
+        }
+
+        /* Bootstrap Enhanced Buttons */
+        .btn {
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #05b586;
+            border-color: #05b586;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            border-color: var(--warning);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        /* Option Cards */
+        .option-card {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .option-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .option-card.selected {
+            border-color: var(--primary);
+            background: rgba(58, 134, 255, 0.1);
+        }
+
+        .option-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: var(--secondary);
+        }
+
+        /* Timeline */
+        .timeline-container {
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .timeline {
+            display: flex;
+            gap: 1rem;
+            min-width: max-content;
+        }
+
+        .month-column {
+            width: 280px;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+        }
+
+        .month-header {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+            color: var(--secondary);
+        }
+
+        .week-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .week-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .week-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .week-title {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .week-duration {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* Tags and badges */
+        .standard-tag {
+            display: inline-block;
+            background: rgba(58, 134, 255, 0.1);
+            color: var(--primary);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50rem;
+            margin-right: 0.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .standard-domain, .standard-grade {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50rem;
+        }
+
+        .standard-domain {
+            background: rgba(58, 134, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .standard-grade {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--accent);
+        }
+
+        /* Drop zones */
+        .drop-zone {
+            min-height: 100px;
+            border: 2px dashed #cbd5e0;
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .drop-zone:hover {
+            background-color: rgba(58, 134, 255, 0.05);
+            border-color: var(--primary-light);
+        }
+
+        /* Standard items */
+        .standard-item {
+            padding: 1rem;
+            background: white;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .standard-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .standard-id {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        /* Sequence planner */
+        .sequence-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sequence-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .sequence-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--secondary);
+        }
+
+        .sequence-steps-container {
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .sequence-steps {
+            display: flex;
+            gap: 1.5rem;
+            min-width: max-content;
+        }
+
+        .step-card {
+            width: 250px;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            position: relative;
+        }
+
+        .step-card::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            right: -1.5rem;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .step-card:last-child::after {
+            display: none;
+        }
+
+        .step-header {
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            color: var(--secondary);
+        }
+
+        .step-content {
+            font-size: 0.9rem;
+        }
+
+        .step-standard {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Search */
+        .search-input {
+            border-radius: 50rem;
+            padding-left: 2.5rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 1rem center;
+        }
+
+        /* Tabs */
+        .nav-tabs .nav-link {
+            border: none;
+            border-bottom: 2px solid transparent;
+            border-radius: 0;
+            color: var(--gray);
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            color: var(--primary);
+        }
+
+        .nav-tabs .nav-link.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+            background-color: transparent;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .sidebar {
+                position: relative;
+                top: 0;
+                height: auto;
+                margin-bottom: 1.5rem;
+            }
+            
+            .sequence-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .sequence-actions {
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+            }
+        }
+
+        /* Bottom navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .bottom-nav .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0;
+            color: var(--gray);
+            font-size: 0.75rem;
+            text-decoration: none;
+        }
+
+        .bottom-nav .nav-link.active {
+            color: var(--primary);
+        }
+
+        .bottom-nav .nav-icon {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Floating action button */
+        .floating-action {
+            position: fixed;
+            bottom: 4.5rem;
+            right: 1.5rem;
+            z-index: 999;
+        }
+
+        .fab-button {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: none;
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .fab-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="app-title mb-0">수학 커리큘럼 설계</h1>
+                <div>
+                    <button class="btn btn-sm btn-outline-light rounded-pill" data-bs-toggle="offcanvas" data-bs-target="#settingsOffcanvas">
+                        <i class="bi bi-gear-fill me-1"></i> 설정
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container content-container py-3">
+        <div class="row g-3">
+            <!-- Left Sidebar (visible on larger screens) -->
+            <div class="col-lg-4 d-none d-lg-block sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="section-title">설정</h2>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">학교급</label>
+                            <select class="form-select">
+                                <option>초등학교</option>
+                                <option>중학교</option>
+                                <option>고등학교</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">학년</label>
+                            <select class="form-select">
+                                <option>1학년</option>
+                                <option selected>2학년</option>
+                                <option>3학년</option>
+                                <option>4학년</option>
+                                <option>5학년</option>
+                                <option>6학년</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">학기</label>
+                            <select class="form-select">
+                                <option>1학기</option>
+                                <option>2학기</option>
+                                <option selected>연간</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">시수 배분 방식</label>
+                            <div class="row g-2 mt-1">
+                                <div class="col-6">
+                                    <div class="option-card selected">
+                                        <div class="option-title">균등 배분</div>
+                                        <div class="small">영역별로 동일한 시수</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="option-card">
+                                        <div class="option-title">가중 배분</div>
+                                        <div class="small">난이도/중요도 기반</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h2 class="section-title">성취기준 목록</h2>
+                        <div class="mb-3">
+                            <input type="text" class="form-control search-input" placeholder="성취기준 검색...">
+                        </div>
+
+                        <ul class="nav nav-tabs" id="standardsTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="number-tab" data-bs-toggle="tab" data-bs-target="#number-tab-pane" type="button" role="tab" aria-selected="true">
+                                    수와 연산
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="change-tab" data-bs-toggle="tab" data-bs-target="#change-tab-pane" type="button" role="tab" aria-selected="false">
+                                    변화와 관계
+                                </button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content py-3" id="standardsTabContent">
+                            <div class="tab-pane fade show active" id="number-tab-pane" role="tabpanel" aria-labelledby="number-tab" tabindex="0">
+                                <div class="standard-item" draggable="true">
+                                    <div class="standard-id">2수01-01</div>
+                                    <div>수의 필요성을 인식하면서 0과 100까지의 수 개념을 이해하고, 수를 세고 읽고 쓸 수 있다.</div>
+                                    <div class="d-flex gap-2 mt-2">
+                                        <span class="standard-domain">수와 연산</span>
+                                        <span class="standard-grade">1-2학년군</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="standard-item" draggable="true">
+                                    <div class="standard-id">2수01-02</div>
+                                    <div>일, 십, 백, 천의 자릿값과 위치적 기수법을 이해하고, 네 자리 이하의 수를 읽고 쓸 수 있다.</div>
+                                    <div class="d-flex gap-2 mt-2">
+                                        <span class="standard-domain">수와 연산</span>
+                                        <span class="standard-grade">1-2학년군</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="standard-item" draggable="true">
+                                    <div class="standard-id">2수01-03</div>
+                                    <div>네 자리 이하의 수의 범위에서 수의 계열을 이해하고, 수의 크기를 비교할 수 있다.</div>
+                                    <div class="d-flex gap-2 mt-2">
+                                        <span class="standard-domain">수와 연산</span>
+                                        <span class="standard-grade">1-2학년군</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="change-tab-pane" role="tabpanel" aria-labelledby="change-tab" tabindex="0">
+                                <div class="standard-item" draggable="true">
+                                    <div class="standard-id">2수02-01</div>
+                                    <div>물체, 무늬, 수 등의 배열에서 규칙을 찾아 여러 가지 방법으로 표현할 수 있다.</div>
+                                    <div class="d-flex gap-2 mt-2">
+                                        <span class="standard-domain">변화와 관계</span>
+                                        <span class="standard-grade">1-2학년군</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-lg-8">
+                <!-- Time Planning Section -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                            <h2 class="section-title mb-0">시간 계획</h2>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-shuffle me-1"></i> 순서 최적화
+                                </button>
+                                <button class="btn btn-sm btn-primary">
+                                    <i class="bi bi-folder-plus me-1"></i> 단원 생성
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="timeline-container">
+                            <div class="timeline">
+                                <div class="month-column">
+                                    <div class="month-header">3월</div>
+                                    <div class="week-card" draggable="true">
+                                        <div class="week-header">
+                                            <div class="week-title">1주차</div>
+                                            <div class="week-duration">3/2 - 3/6</div>
+                                        </div>
+                                        <div>수 개념의 이해와 표현</div>
+                                        <div class="mt-2">
+                                            <span class="standard-tag">2수01-01</span>
+                                        </div>
+                                    </div>
+                                    <div class="week-card" draggable="true">
+                                        <div class="week-header">
+                                            <div class="week-title">2주차</div>
+                                            <div class="week-duration">3/9 - 3/13</div>
+                                        </div>
+                                        <div>자릿값과 위치적 기수법</div>
+                                        <div class="mt-2">
+                                            <span class="standard-tag">2수01-02</span>
+                                        </div>
+                                    </div>
+                                    <div class="week-card" draggable="true">
+                                        <div class="week-header">
+                                            <div class="week-title">3주차</div>
+                                            <div class="week-duration">3/16 - 3/20</div>
+                                        </div>
+                                        <div>수의 계열과 비교</div>
+                                        <div class="mt-2">
+                                            <span class="standard-tag">2수01-03</span>
+                                        </div>
+                                    </div>
+                                    <div class="week-card" draggable="true">
+                                        <div class="week-header">
+                                            <div class="week-title">4주차</div>
+                                            <div class="week-duration">3/23 - 3/27</div>
+                                        </div>
+                                        <div>덧셈과 뺄셈의 기초</div>
+                                        <div class="mt-2">
+                                            <span class="standard-tag">2수01-04</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="month-column">
+                                    <div class="month-header">4월</div>
+                                    <div class="week-card" draggable="true">
+                                        <div class="week-header">
+                                            <div class="week-title">1주차</div>
+                                            <div class="week-duration">4/1 - 4/5</div>
+                                        </div>
+                                        <div>두 자리 수의 덧셈</div>
+                                        <div class="mt-2">
+                                            <span class="standard-tag">2수01-05</span>
+                                        </div>
+                                    </div>
+                                    <div class="week-card" draggable="true">
+                                        <div class="week-header">
+                                            <div class="week-title">2주차</div>
+                                            <div class="week-duration">4/8 - 4/12</div>
+                                        </div>
+                                        <div>두 자리 수의 뺄셈</div>
+                                        <div class="mt-2">
+                                            <span class="standard-tag">2수01-06</span>
+                                        </div>
+                                    </div>
+                                    <div class="drop-zone">
+                                        여기에 성취기준을 끌어다 놓으세요
+                                    </div>
+                                </div>
+
+                                <div class="month-column">
+                                    <div class="month-header">5월</div>
+                                    <div class="drop-zone">
+                                        여기에 성취기준을 끌어다 놓으세요
+                                    </div>
+                                </div>
+
+                                <div class="month-column">
+                                    <div class="month-header">6월</div>
+                                    <div class="drop-zone">
+                                        여기에 성취기준을 끌어다 놓으세요
+                                    </div>
+                                </div>
+
+                                <div class="month-column">
+                                    <div class="month-header">7월</div>
+                                    <div class="drop-zone">
+                                        여기에 성취기준을 끌어다 놓으세요
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Sequence Section -->
+                <h2 class="section-title mt-4">학습 순서 설계</h2>
+                
+                <div class="sequence-card">
+                    <div class="sequence-header">
+                        <div class="sequence-title">단원 1: 수 개념과 연산의 기초</div>
+                        <div class="sequence-actions">
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-arrow-left-right me-1"></i> 순서 최적화
+                            </button>
+                            <button class="btn btn-sm btn-primary ms-2">
+                                <i class="bi bi-plus-lg me-1"></i> 단계 추가
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sequence-steps-container">
+                        <div class="sequence-steps">
+                            <div class="step-card">
+                                <div class="step-header">1단계: 수 개념 이해</div>
+                                <div class="step-content">
+                                    0부터 100까지 수의 의미와 필요성을 인식하고 수 개념을 형성한다.
+                                </div>
+                                <div class="step-standard">2수01-01</div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-header">2단계: 수 세기와 표현</div>
+                                <div class="step-content">
+                                    다양한 방식으로 수를 세고, 읽고, 쓰는 활동을 통해 수에 친숙해진다.
+                                </div>
+                                <div class="step-standard">2수01-01</div>
+                                <div class="step-card">
+                                    <div class="step-header">3단계: 자릿값 이해</div>
+                                    <div class="step-content">
+                                        일, 십, 백, 천의 자릿값 개념을 구체물을 통해 이해한다.
+                                    </div>
+                                    <div class="step-standard">2수01-02</div>
+                                </div>
+                                <div class="step-card">
+                                    <div class="step-header">4단계: 위치적 기수법</div>
+                                    <div class="step-content">
+                                        위치적 기수법에 따라 네 자리 이하의 수를 읽고 쓴다.
+                                    </div>
+                                    <div class="step-standard">2수01-02</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="sequence-card">
+                        <div class="sequence-header">
+                            <div class="sequence-title">단원 2: 수의 계열과 비교</div>
+                            <div class="sequence-actions">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-arrow-left-right me-1"></i> 순서 최적화
+                                </button>
+                                <button class="btn btn-sm btn-primary ms-2">
+                                    <i class="bi bi-plus-lg me-1"></i> 단계 추가
+                                </button>
+                            </div>
+                        </div>
+    
+                        <div class="sequence-steps-container">
+                            <div class="sequence-steps">
+                                <div class="step-card">
+                                    <div class="step-header">1단계: 수의 계열 이해</div>
+                                    <div class="step-content">
+                                        수의 순서와 규칙성을 이해하고, 수의 계열을 파악한다.
+                                    </div>
+                                    <div class="step-standard">2수01-03</div>
+                                </div>
+                                <div class="step-card">
+                                    <div class="step-header">2단계: 수의 크기 비교</div>
+                                    <div class="step-content">
+                                        네 자리 이하의 수의 크기를 비교하는 방법을 익힌다.
+                                    </div>
+                                    <div class="step-standard">2수01-03</div>
+                                </div>
+                                <div class="step-card">
+                                    <div class="step-header">3단계: 수 사이의 관계</div>
+                                    <div class="step-content">
+                                        수 사이의 관계를 탐구하고, 수직선 위에 수를 표현한다.
+                                    </div>
+                                    <div class="step-standard">2수01-03</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- 선수학습 및 연계성 섹션 -->
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <h2 class="section-title">선수학습 및 연계성</h2>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-body">
+                                            <h5 class="card-title">
+                                                <i class="bi bi-arrow-up-circle text-primary me-2"></i>선수학습 요소
+                                            </h5>
+                                            <ul class="list-group list-group-flush border-0">
+                                                <li class="list-group-item border-0 bg-transparent">물체의 개수 세기 (유치원)</li>
+                                                <li class="list-group-item border-0 bg-transparent">20까지의 수 세기 (유치원)</li>
+                                                <li class="list-group-item border-0 bg-transparent">간단한 수의 크기 비교 (유치원)</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-body">
+                                            <h5 class="card-title">
+                                                <i class="bi bi-arrow-down-circle text-success me-2"></i>후속학습 연계
+                                            </h5>
+                                            <ul class="list-group list-group-flush border-0">
+                                                <li class="list-group-item border-0 bg-transparent">세 자리 수의 덧셈과 뺄셈 (2학년 2학기)</li>
+                                                <li class="list-group-item border-0 bg-transparent">곱셈의 기초 (2학년 2학기)</li>
+                                                <li class="list-group-item border-0 bg-transparent">분수의 도입 (3학년 1학기)</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- 교과 역량 연계 섹션 -->
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <h2 class="section-title">교과 역량 연계</h2>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card h-100 border-0" style="background-color: rgba(58, 134, 255, 0.1);">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-primary">
+                                                <i class="bi bi-puzzle me-2"></i>문제해결
+                                            </h5>
+                                            <ul class="small ps-3">
+                                                <li>일상생활에서 수와 연산이 필요한 상황 해결하기</li>
+                                                <li>다양한 전략을 활용하여 덧셈과 뺄셈 문제 해결하기</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card h-100 border-0" style="background-color: rgba(76, 201, 240, 0.1);">
+                                        <div class="card-body">
+                                            <h5 class="card-title" style="color: var(--accent);">
+                                                <i class="bi bi-lightbulb me-2"></i>추론
+                                            </h5>
+                                            <ul class="small ps-3">
+                                                <li>수의 규칙성을 탐구하고 추측하기</li>
+                                                <li>수의 크기를 비교하는 방법을 추론하기</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card h-100 border-0" style="background-color: rgba(6, 214, 160, 0.1);">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-success">
+                                                <i class="bi bi-chat-dots me-2"></i>의사소통
+                                            </h5>
+                                            <ul class="small ps-3">
+                                                <li>수 개념을 다양한 방식으로 표현하기</li>
+                                                <li>수학적 언어를 사용하여 자신의 생각 설명하기</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card h-100 border-0" style="background-color: rgba(255, 159, 28, 0.1);">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-warning">
+                                                <i class="bi bi-link-45deg me-2"></i>연결
+                                            </h5>
+                                            <ul class="small ps-3">
+                                                <li>수 개념과 실생활 연결하기</li>
+                                                <li>수와 연산의 개념 간 관계 이해하기</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card h-100 border-0" style="background-color: rgba(239, 71, 111, 0.1);">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-danger">
+                                                <i class="bi bi-bar-chart me-2"></i>정보처리
+                                            </h5>
+                                            <ul class="small ps-3">
+                                                <li>수량 정보 수집 및 분류하기</li>
+                                                <li>다양한 방법으로 수와 연산 결과 표현하기</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- 플로팅 액션 버튼 -->
+        <div class="floating-action">
+            <button class="fab-button" data-bs-toggle="modal" data-bs-target="#addUnitModal">
+                <i class="bi bi-plus"></i>
+            </button>
+        </div>
+    
+        <!-- 하단 네비게이션 바 (모바일용) -->
+        <nav class="bottom-nav d-lg-none">
+            <div class="container">
+                <div class="row g-0">
+                    <div class="col">
+                        <a href="#" class="nav-link active">
+                            <i class="bi bi-calendar-week nav-icon"></i>
+                            <span>계획</span>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-list-check nav-icon"></i>
+                            <span>성취기준</span>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-diagram-3 nav-icon"></i>
+                            <span>순서</span>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-gear nav-icon"></i>
+                            <span>설정</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    
+        <!-- 설정 오프캔버스 (모바일용) -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="settingsOffcanvas" aria-labelledby="settingsOffcanvasLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="settingsOffcanvasLabel">커리큘럼 설정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="mb-3">
+                    <label class="form-label">학교급</label>
+                    <select class="form-select">
+                        <option>초등학교</option>
+                        <option>중학교</option>
+                        <option>고등학교</option>
+                    </select>
+                </div>
+    
+                <div class="mb-3">
+                    <label class="form-label">학년</label>
+                    <select class="form-select">
+                        <option>1학년</option>
+                        <option selected>2학년</option>
+                        <option>3학년</option>
+                        <option>4학년</option>
+                        <option>5학년</option>
+                        <option>6학년</option>
+                    </select>
+                </div>
+    
+                <div class="mb-3">
+                    <label class="form-label">학기</label>
+                    <select class="form-select">
+                        <option>1학기</option>
+                        <option>2학기</option>
+                        <option selected>연간</option>
+                    </select>
+                </div>
+    
+                <div class="mb-3">
+                    <label class="form-label">시수 배분 방식</label>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="timeDistribution" id="equalDistribution" checked>
+                        <label class="form-check-label" for="equalDistribution">
+                            <strong>균등 배분</strong> - 영역별로 동일한 시수 배분
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="timeDistribution" id="weightedDistribution">
+                        <label class="form-check-label" for="weightedDistribution">
+                            <strong>가중 배분</strong> - 난이도/중요도에 따른 시수 조정
+                        </label>
+                    </div>
+                </div>
+    
+                <div class="d-grid gap-2 mt-4">
+                    <button class="btn btn-primary">저장하기</button>
+                    <button class="btn btn-outline-primary">내보내기</button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- 단원 추가 모달 -->
+        <div class="modal fade" id="addUnitModal" tabindex="-1" aria-labelledby="addUnitModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addUnitModalLabel">새 단원 추가</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="unitTitle" class="form-label">단원명</label>
+                            <input type="text" class="form-control" id="unitTitle" placeholder="예: 수의 연산과 활용">
+                        </div>
+                        <div class="mb-3">
+                            <label for="unitPeriod" class="form-label">기간</label>
+                            <select class="form-select" id="unitPeriod">
+                                <option>3월</option>
+                                <option>4월</option>
+                                <option>5월</option>
+                                <option>6월</option>
+                                <option>7월</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">포함할 성취기준</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" value="" id="standard1" checked>
+                                <label class="form-check-label" for="standard1">
+                                    2수01-01: 수의 필요성을 인식하면서 0과 100까지의 수 개념을 이해하고, 수를 세고 읽고 쓸 수 있다.
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" value="" id="standard2" checked>
+                                <label class="form-check-label" for="standard2">
+                                    2수01-02: 일, 십, 백, 천의 자릿값과 위치적 기수법을 이해하고, 네 자리 이하의 수를 읽고 쓸 수 있다.
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="standard3">
+                                <label class="form-check-label" for="standard3">
+                                    2수01-03: 네 자리 이하의 수의 범위에서 수의 계열을 이해하고, 수의 크기를 비교할 수 있다.
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="unitHours" class="form-label">총 차시 수</label>
+                            <input type="number" class="form-control" id="unitHours" value="10">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="button" class="btn btn-primary">단원 추가</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Bootstrap JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        
+        <!-- 간단한 인터랙션 스크립트 -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // 옵션 카드 선택 기능
+                const optionCards = document.querySelectorAll('.option-card');
+                optionCards.forEach(card => {
+                    card.addEventListener('click', function() {
+                        const parent = this.closest('.row, .options-grid');
+                        parent.querySelectorAll('.option-card').forEach(c => {
+                            c.classList.remove('selected');
+                        });
+                        this.classList.add('selected');
+                    });
+                });
+                
+                // 표준 항목 드래그 앤 드롭 시뮬레이션 (실제 구현은 추가 코드 필요)
+                const standardItems = document.querySelectorAll('.standard-item');
+                const dropZones = document.querySelectorAll('.drop-zone');
+                
+                standardItems.forEach(item => {
+                    item.addEventListener('dragstart', function(e) {
+                        e.dataTransfer.setData('text/plain', this.querySelector('.standard-id').textContent);
+                        setTimeout(() => {
+                            this.classList.add('dragging');
+                        }, 0);
+                    });
+                    
+                    item.addEventListener('dragend', function() {
+                        this.classList.remove('dragging');
+                    });
+                });
+                
+                dropZones.forEach(zone => {
+                    zone.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        this.classList.add('dragover');
+                    });
+                    
+                    zone.addEventListener('dragleave', function() {
+                        this.classList.remove('dragover');
+                    });
+                    
+                    zone.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        this.classList.remove('dragover');
+                        const standardId = e.dataTransfer.getData('text/plain');
+                        // 실제 구현에서는 여기에 표준 항목을 추가하는 코드 필요
+                        this.innerHTML = `<div class="week-card" draggable="true">
+                            <div class="week-header">
+                                <div class="week-title">새 주차</div>
+                                <div class="week-duration">날짜 미정</div>
+                            </div>
+                            <div>새로 추가된 학습 내용</div>
+                            <div class="mt-2">
+                                <span class="standard-tag">${standardId}</span>
+                            </div>
+                        </div>`;
+                    });
+                });
+                
+                // 모바일 하단 네비게이션 활성화
+                const bottomNavLinks = document.querySelectorAll('.bottom-nav .nav-link');
+                bottomNavLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        bottomNavLinks.forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                });
+            });
+        </script>
+    </body>
+    </html>

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>수학 교육과정 뷰어</title>
+        <!-- Bootstrap CSS -->
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <!-- Bootstrap Icons -->
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --primary: #6366f1;
+                --secondary: #4f46e5;
+                --accent: #818cf8;
+                --success: #10b981;
+                --info: #0ea5e9;
+                --warning: #f59e0b;
+                --danger: #ef4444;
+            }
+
+            body {
+                background-color: #f8fafc;
+                font-family: "Pretendard", -apple-system, BlinkMacSystemFont,
+                    system-ui, Roboto, sans-serif;
+                padding-bottom: 70px; /* Space for bottom nav */
+            }
+
+            .nav-icon {
+                font-size: 1.2rem;
+            }
+
+            .navbar-brand span {
+                font-weight: 700;
+            }
+
+            .domain-card {
+                border-radius: 12px;
+                border-left: 5px solid var(--primary);
+                transition: all 0.3s ease;
+            }
+
+            .domain-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            }
+
+            .standard-card {
+                border-radius: 10px;
+                border: none;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .standard-card:hover {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+
+            .card-header {
+                border-bottom: none;
+                background-color: transparent;
+            }
+
+            .badge-domain {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .badge-grade {
+                background-color: var(--info);
+                color: white;
+            }
+
+            .badge-competency {
+                background-color: var(--accent);
+                color: white;
+            }
+
+            .badge-term {
+                background-color: var(--warning);
+                color: white;
+            }
+
+            .standard-id {
+                color: var(--primary);
+                font-weight: 600;
+            }
+
+            .achievement-level {
+                font-size: 0.85rem;
+                padding: 0.5rem;
+                border-radius: 8px;
+                margin-bottom: 0.5rem;
+            }
+
+            .level-a {
+                background-color: rgba(16, 185, 129, 0.1);
+                border-left: 3px solid var(--success);
+            }
+
+            .level-b {
+                background-color: rgba(14, 165, 233, 0.1);
+                border-left: 3px solid var(--info);
+            }
+
+            .level-c {
+                background-color: rgba(245, 158, 11, 0.1);
+                border-left: 3px solid var(--warning);
+            }
+
+            .core-idea-card {
+                background-color: rgba(99, 102, 241, 0.05);
+                border-radius: 8px;
+                border-left: 3px solid var(--primary);
+            }
+
+            .search-box {
+                border-radius: 20px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+
+            .bottom-nav {
+                background: white;
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                z-index: 1000;
+            }
+
+            .bottom-nav .nav-link {
+                font-size: 0.75rem;
+                color: #64748b;
+                text-align: center;
+                padding: 0.5rem 0;
+            }
+
+            .bottom-nav .nav-link.active {
+                color: var(--primary);
+            }
+
+            .bottom-nav i {
+                font-size: 1.2rem;
+                display: block;
+                margin-bottom: 0.2rem;
+            }
+
+            .progress {
+                height: 8px;
+                margin-top: 0.5rem;
+            }
+
+            .progress-sm {
+                height: 4px;
+            }
+
+            .overlay-search {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: white;
+                z-index: 2000;
+                display: none;
+                overflow-y: auto;
+            }
+
+            .section-title {
+                position: relative;
+                padding-left: 12px;
+                margin-bottom: 1rem;
+                font-weight: 600;
+            }
+
+            .section-title::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 4px;
+                height: 18px;
+                background-color: var(--primary);
+                border-radius: 2px;
+            }
+
+            .offcanvas-backdrop {
+                background-color: rgba(0, 0, 0, 0.3);
+            }
+
+            .map-node {
+                padding: 0.75rem;
+                border-radius: 8px;
+                margin-bottom: 1rem;
+                transition: all 0.3s ease;
+            }
+
+            .map-node:hover {
+                transform: translateY(-2px);
+            }
+
+            .node-domain {
+                background-color: rgba(99, 102, 241, 0.1);
+                border-left: 3px solid var(--primary);
+            }
+
+            .node-core-idea {
+                background-color: rgba(129, 140, 248, 0.1);
+                border-left: 3px solid var(--accent);
+            }
+
+            .node-standard {
+                background-color: rgba(14, 165, 233, 0.1);
+                border-left: 3px solid var(--info);
+            }
+
+            .node-arrow {
+                display: flex;
+                justify-content: center;
+                color: #cbd5e1;
+                margin: 0.5rem 0;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Top Navigation -->
+        <nav class="navbar navbar-light bg-white mb-3 shadow-sm">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <span class="text-primary">수학</span> 교육과정
+                </a>
+                <div>
+                    <button
+                        type="button"
+                        class="btn btn-light rounded-circle"
+                        id="searchBtn"
+                    >
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <button
+                        class="btn btn-light rounded-circle ms-1"
+                        type="button"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#filterOffcanvas"
+                    >
+                        <i class="bi bi-sliders"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="container mb-5">
+            <!-- Today's Learning Status -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <div
+                        class="d-flex justify-content-between align-items-center mb-2"
+                    >
+                        <h5 class="mb-0">학습 진행 상황</h5>
+                        <a href="#" class="text-decoration-none">상세 보기</a>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>전체 진도율</span>
+                        <span class="fw-bold">65%</span>
+                    </div>
+                    <div class="progress mb-3">
+                        <div
+                            class="progress-bar bg-primary"
+                            role="progressbar"
+                            style="width: 65%"
+                            aria-valuenow="65"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                        ></div>
+                    </div>
+
+                    <div class="row g-2 mt-1">
+                        <div class="col-6">
+                            <div
+                                class="d-flex justify-content-between small mb-1"
+                            >
+                                <span>수와 연산</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress progress-sm">
+                                <div
+                                    class="progress-bar bg-success"
+                                    role="progressbar"
+                                    style="width: 85%"
+                                    aria-valuenow="85"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                ></div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div
+                                class="d-flex justify-content-between small mb-1"
+                            >
+                                <span>변화와 관계</span>
+                                <span>70%</span>
+                            </div>
+                            <div class="progress progress-sm">
+                                <div
+                                    class="progress-bar bg-info"
+                                    role="progressbar"
+                                    style="width: 70%"
+                                    aria-valuenow="70"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                ></div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div
+                                class="d-flex justify-content-between small mb-1"
+                            >
+                                <span>도형과 측정</span>
+                                <span>55%</span>
+                            </div>
+                            <div class="progress progress-sm">
+                                <div
+                                    class="progress-bar bg-primary"
+                                    role="progressbar"
+                                    style="width: 55%"
+                                    aria-valuenow="55"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                ></div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div
+                                class="d-flex justify-content-between small mb-1"
+                            >
+                                <span>자료와 가능성</span>
+                                <span>40%</span>
+                            </div>
+                            <div class="progress progress-sm">
+                                <div
+                                    class="progress-bar bg-warning"
+                                    role="progressbar"
+                                    style="width: 40%"
+                                    aria-valuenow="40"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Curriculum Areas -->
+            <h5 class="section-title mb-3">교육과정 영역</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card domain-card shadow-sm">
+                        <div class="card-body">
+                            <div
+                                class="d-flex justify-content-between align-items-center"
+                            >
+                                <h6 class="card-title mb-0">수와 연산</h6>
+                                <span class="badge bg-success rounded-pill"
+                                    >85%</span
+                                >
+                            </div>
+                            <p class="card-text small text-muted mt-2 mb-0">
+                                자연수, 분수, 소수의 개념과 사칙연산
+                            </p>
+                            <div class="progress progress-sm mt-2">
+                                <div
+                                    class="progress-bar bg-success"
+                                    role="progressbar"
+                                    style="width: 85%"
+                                    aria-valuenow="85"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card domain-card shadow-sm">
+                        <div class="card-body">
+                            <div
+                                class="d-flex justify-content-between align-items-center"
+                            >
+                                <h6 class="card-title mb-0">변화와 관계</h6>
+                                <span class="badge bg-info rounded-pill"
+                                    >70%</span
+                                >
+                            </div>
+                            <p class="card-text small text-muted mt-2 mb-0">
+                                규칙성, 함수, 비례와 반비례
+                            </p>
+                            <div class="progress progress-sm mt-2">
+                                <div
+                                    class="progress-bar bg-info"
+                                    role="progressbar"
+                                    style="width: 70%"
+                                    aria-valuenow="70"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card domain-card shadow-sm">
+                        <div class="card-body">
+                            <div
+                                class="d-flex justify-content-between align-items-center"
+                            >
+                                <h6 class="card-title mb-0">도형과 측정</h6>
+                                <span class="badge bg-primary rounded-pill"
+                                    >55%</span
+                                >
+                            </div>
+                            <p class="card-text small text-muted mt-2 mb-0">
+                                평면도형, 입체도형, 길이와 넓이
+                            </p>
+                            <div class="progress progress-sm mt-2">
+                                <div
+                                    class="progress-bar bg-primary"
+                                    role="progressbar"
+                                    style="width: 55%"
+                                    aria-valuenow="55"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card domain-card shadow-sm">
+                        <div class="card-body">
+                            <div
+                                class="d-flex justify-content-between align-items-center"
+                            >
+                                <h6 class="card-title mb-0">자료와 가능성</h6>
+                                <span class="badge bg-warning rounded-pill"
+                                    >40%</span
+                                >
+                            </div>
+                            <p class="card-text small text-muted mt-2 mb-0">
+                                자료 수집과 정리, 확률
+                            </p>
+                            <div class="progress progress-sm mt-2">
+                                <div
+                                    class="progress-bar bg-warning"
+                                    role="progressbar"
+                                    style="width: 40%"
+                                    aria-valuenow="40"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Achievement Standards -->
+            <h5 class="section-title mb-3">현재 학습중인 성취기준</h5>
+
+            <div class="card standard-card mb-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="standard-id me-2">2수01-01</span>
+                        <span class="badge badge-domain me-1">수와 연산</span>
+                        <span class="badge badge-grade">1-2학년</span>
+                    </div>
+                    <p class="card-text mb-2">
+                        수의 필요성을 인식하면서 0과 100까지의 수 개념을
+                        이해하고, 수를 세고 읽고 쓸 수 있다.
+                    </p>
+                    <div
+                        class="d-flex justify-content-between align-items-center"
+                    >
+                        <div>
+                            <span class="badge badge-competency me-1"
+                                >문제해결</span
+                            >
+                            <span class="badge badge-competency">의사소통</span>
+                        </div>
+                        <button
+                            class="btn btn-sm btn-primary rounded-pill px-3"
+                        >
+                            학습하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card standard-card mb-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="standard-id me-2">2수01-02</span>
+                        <span class="badge badge-domain me-1">수와 연산</span>
+                        <span class="badge badge-grade">1-2학년</span>
+                    </div>
+                    <p class="card-text mb-2">
+                        일, 십, 백, 천의 자릿값과 위치적 기수법을 이해하고, 네
+                        자리 이하의 수를 읽고 쓸 수 있다.
+                    </p>
+                    <div
+                        class="d-flex justify-content-between align-items-center"
+                    >
+                        <div>
+                            <span class="badge badge-competency me-1"
+                                >추론</span
+                            >
+                            <span class="badge badge-competency">의사소통</span>
+                        </div>
+                        <button
+                            class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                        >
+                            다음 학습
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Path -->
+            <h5 class="section-title mb-3">학습 경로</h5>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-3">
+                    <div class="map-node node-domain">
+                        <div class="fw-bold">수와 연산</div>
+                        <div class="small text-muted">
+                            수와 연산 영역의 기본 개념과 연산 원리
+                        </div>
+                    </div>
+
+                    <div class="node-arrow">
+                        <i class="bi bi-arrow-down"></i>
+                    </div>
+
+                    <div class="map-node node-core-idea">
+                        <div class="fw-bold">핵심 아이디어: 수 표현과 확장</div>
+                        <div class="small text-muted">
+                            사물의 양은 자연수, 분수, 소수 등으로 표현되며, 수는
+                            자연수에서 정수, 유리수, 실수로 확장된다.
+                        </div>
+                    </div>
+
+                    <div class="node-arrow">
+                        <i class="bi bi-arrow-down"></i>
+                    </div>
+
+                    <div class="map-node node-standard">
+                        <div class="standard-id mb-1">2수01-01</div>
+                        <div class="small">
+                            수의 필요성을 인식하면서 0과 100까지의 수 개념을
+                            이해하고, 수를 세고 읽고 쓸 수 있다.
+                        </div>
+                    </div>
+
+                    <div class="node-arrow">
+                        <i class="bi bi-arrow-down"></i>
+                    </div>
+
+                    <div class="map-node node-standard">
+                        <div class="standard-id mb-1">2수01-02</div>
+                        <div class="small">
+                            일, 십, 백, 천의 자릿값과 위치적 기수법을 이해하고,
+                            네 자리 이하의 수를 읽고 쓸 수 있다.
+                        </div>
+                    </div>
+
+                    <div class="node-arrow">
+                        <i class="bi bi-arrow-down"></i>
+                    </div>
+
+                    <div class="map-node node-standard opacity-50">
+                        <div class="standard-id mb-1">2수01-03</div>
+                        <div class="small">
+                            네 자리 이하의 수의 범위에서 수의 계열을 이해하고,
+                            수의 크기를 비교할 수 있다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav fixed-bottom">
+            <div class="d-flex justify-content-around">
+                <a href="#" class="nav-link active">
+                    <i class="bi bi-house"></i>
+                    <span>홈</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="bi bi-bar-chart"></i>
+                    <span>분석</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="bi bi-book"></i>
+                    <span>학습</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="bi bi-gear"></i>
+                    <span>설정</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Search Overlay -->
+        <div class="overlay-search" id="overlaySearch">
+            <div class="container py-4">
+                <div class="input-group mb-3">
+                    <input
+                        type="text"
+                        class="form-control search-box border-end-0"
+                        placeholder="검색어를 입력하세요..."
+                        aria-label="Search"
+                    />
+                    <button
+                        class="btn btn-primary"
+                        type="button"
+                        id="searchCloseBtn"
+                    >
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <!-- 검색 결과 영역 -->
+                <div id="searchResults">
+                    <p class="text-muted">검색 결과가 여기에 표시됩니다.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS Bundle (Popper.js 포함) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // 검색 오버레이 열기/닫기 기능 구현
+            const searchBtn = document.getElementById("searchBtn");
+            const overlaySearch = document.getElementById("overlaySearch");
+            const searchCloseBtn = document.getElementById("searchCloseBtn");
+
+            searchBtn.addEventListener("click", () => {
+                overlaySearch.style.display = "block";
+            });
+
+            searchCloseBtn.addEventListener("click", () => {
+                overlaySearch.style.display = "none";
+            });
+        </script>
+    </body>
+</html>
