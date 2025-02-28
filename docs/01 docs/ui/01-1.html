@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>수학 교육과정 네비게이터</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        />
+        <style>
+            :root {
+                --primary: #4361ee;
+                --secondary: #3f37c9;
+                --accent: #4895ef;
+                --light: #f8f9fa;
+                --dark: #212529;
+                --success: #4cc9f0;
+                --warning: #f72585;
+                --info: #560bad;
+                --gray-light: #e9ecef;
+                --gray: #adb5bd;
+                --border-radius: 0.5rem;
+                --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+                --transition: all 0.3s ease;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Noto Sans KR", sans-serif;
+                line-height: 1.6;
+                color: var(--dark);
+                background-color: #f5f7fb;
+            }
+
+            header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+                color: white;
+                padding: 1.5rem;
+                box-shadow: var(--box-shadow);
+                position: relative;
+            }
+
+            .header-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .user-nav {
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+            }
+
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: var(--light);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                color: var(--primary);
+            }
+
+            h1,
+            h2,
+            h3,
+            h4 {
+                margin-bottom: 1rem;
+                font-weight: 600;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 0;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+                border-bottom: 2px solid var(--accent);
+                padding-bottom: 0.5rem;
+                margin-top: 1.5rem;
+            }
+
+            main {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 2rem;
+            }
+
+            .breadcrumb {
+                display: flex;
+                list-style: none;
+                margin-bottom: 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .breadcrumb li {
+                display: flex;
+                align-items: center;
+            }
+
+            .breadcrumb li:not(:last-child)::after {
+                content: "/";
+                margin: 0 0.5rem;
+                color: var(--gray);
+            }
+
+            .breadcrumb a {
+                color: var(--primary);
+                text-decoration: none;
+            }
+
+            .breadcrumb .active {
+                color: var(--dark);
+                font-weight: 500;
+            }
+
+            .dashboard {
+                display: grid;
+                grid-template-columns: 300px 1fr;
+                gap: 2rem;
+            }
+
+            .search-box {
+                background-color: white;
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                margin-bottom: 2rem;
+                position: sticky;
+                top: 2rem;
+            }
+
+            .search-container {
+                position: relative;
+                margin-bottom: 1rem;
+            }
+
+            .search-input {
+                width: 100%;
+                padding: 0.8rem 1rem 0.8rem 2.5rem;
+                border: 1px solid #ddd;
+                border-radius: var(--border-radius);
+                font-size: 1rem;
+                transition: var(--transition);
+            }
+
+            .search-input:focus {
+                border-color: var(--accent);
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+            }
+
+            .search-icon {
+                position: absolute;
+                left: 0.8rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--gray);
+            }
+
+            .filter-section {
+                margin-bottom: 1.5rem;
+            }
+
+            .filter-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 0.8rem;
+            }
+
+            .filter-title {
+                font-weight: 600;
+                font-size: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .filter-reset {
+                font-size: 0.8rem;
+                color: var(--gray);
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .filter-reset:hover {
+                color: var(--primary);
+            }
+
+            .filter-options {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .filter-option {
+                padding: 0.4rem 0.8rem;
+                background-color: var(--light);
+                border-radius: 20px;
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+            .filter-option .count {
+                font-size: 0.8rem;
+                color: var(--gray);
+            }
+
+            .filter-option:hover {
+                background-color: #e2e6ea;
+            }
+
+            .filter-option.active {
+                background-color: var(--accent);
+                color: white;
+            }
+
+            .filter-option.active .count {
+                color: rgba(255, 255, 255, 0.8);
+            }
+
+            .recently-viewed {
+                background-color: white;
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+            }
+
+            .recently-item {
+                display: flex;
+                align-items: center;
+                padding: 0.8rem;
+                border-radius: var(--border-radius);
+                transition: var(--transition);
+                margin-bottom: 0.5rem;
+                cursor: pointer;
+            }
+
+            .recently-item:hover {
+                background-color: var(--light);
+            }
+
+            .recently-item-icon {
+                margin-right: 0.8rem;
+                color: var(--primary);
+                font-size: 1.2rem;
+            }
+
+            .recently-item-content {
+                flex: 1;
+            }
+
+            .recently-item-title {
+                font-weight: 500;
+                font-size: 0.9rem;
+            }
+
+            .recently-item-subtitle {
+                font-size: 0.8rem;
+                color: var(--gray);
+            }
+
+            .content-display {
+                background-color: white;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                overflow: hidden;
+            }
+
+            .tab-header {
+                display: flex;
+                background-color: var(--secondary);
+                color: white;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
+
+            .tab {
+                padding: 1rem 1.5rem;
+                cursor: pointer;
+                transition: var(--transition);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .tab:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .tab.active {
+                background-color: var(--primary);
+                font-weight: 600;
+            }
+
+            .tab-content {
+                padding: 2rem;
+                min-height: 500px;
+            }
+
+            .std-card {
+                background-color: var(--light);
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                margin-bottom: 1.5rem;
+                border-left: 4px solid var(--primary);
+                transition: var(--transition);
+            }
+
+            .std-card:hover {
+                box-shadow: var(--box-shadow);
+                transform: translateY(-3px);
+            }
+
+            .std-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 1rem;
+                align-items: center;
+            }
+
+            .std-id-container {
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+            }
+
+            .std-id {
+                font-weight: 600;
+                color: var(--primary);
+                font-size: 1.1rem;
+            }
+
+            .std-actions {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .std-action-btn {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background-color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: var(--transition);
+                color: var(--gray);
+                border: 1px solid var(--gray-light);
+            }
+
+            .std-action-btn:hover {
+                background-color: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+
+            .std-grade {
+                color: var(--info);
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .std-grade-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: var(--info);
+            }
+
+            .std-content {
+                margin-bottom: 1rem;
+                font-size: 1.1rem;
+                line-height: 1.6;
+            }
+
+            .chip-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .chip {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.3rem 0.8rem;
+                background-color: #e9ecef;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                gap: 0.4rem;
+                transition: var(--transition);
+            }
+
+            .chip:hover {
+                transform: translateY(-2px);
+            }
+
+            .chip i {
+                font-size: 0.75rem;
+            }
+
+            .chip.domain {
+                background-color: #4361ee;
+                color: white;
+            }
+
+            .chip.core-idea {
+                background-color: #3a0ca3;
+                color: white;
+            }
+
+            .chip.term {
+                background-color: #4cc9f0;
+                color: white;
+            }
+
+            .chip.competency {
+                background-color: #7209b7;
+                color: white;
+            }
+
+            .related-section {
+                margin-top: 1.5rem;
+                background-color: white;
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.08);
+            }
+
+            .related-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+
+            .related-title {
+                font-weight: 600;
+                font-size: 1.1rem;
+                color: var(--secondary);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .related-actions {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .core-idea-box {
+                background-color: #f1f3f9;
+                padding: 1.2rem;
+                border-radius: var(--border-radius);
+                margin-bottom: 1rem;
+                border-left: 3px solid var(--info);
+                transition: var(--transition);
+            }
+
+            .core-idea-box:hover {
+                background-color: #e6eaf8;
+                transform: translateY(-2px);
+                box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.08);
+            }
+
+            .core-idea-title {
+                font-weight: 600;
+                color: var(--info);
+                margin-bottom: 0.5rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .core-idea-content {
+                line-height: 1.6;
+            }
+
+            .knowledge-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .knowledge-item {
+                background-color: #f1f3f9;
+                padding: 1.2rem;
+                border-radius: var(--border-radius);
+                transition: var(--transition);
+                border-left: 3px solid transparent;
+            }
+
+            .knowledge-item:hover {
+                background-color: #e2e8f0;
+                transform: translateY(-3px);
+                box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.08);
+            }
+
+            .knowledge-item.knowledge {
+                border-left-color: #4361ee;
+            }
+
+            .knowledge-item.process {
+                border-left-color: #7209b7;
+            }
+
+            .knowledge-item.value {
+                border-left-color: #4cc9f0;
+            }
+
+            .category-label {
+                font-size: 0.8rem;
+                font-weight: 500;
+                margin-bottom: 0.5rem;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+
+            .knowledge .category-label {
+                color: #4361ee;
+            }
+
+            .process .category-label {
+                color: #7209b7;
+            }
+
+            .value .category-label {
+                color: #4cc9f0;
+            }
+
+            .knowledge-content {
+                font-size: 0.95rem;
+                line-height: 1.5;
+            }
+
+            .term-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .term-group {
+                margin-bottom: 0.8rem;
+            }
+
+            .term-group-title {
+                font-size: 0.8rem;
+                color: var(--gray);
+                margin-bottom: 0.5rem;
+            }
+
+            .eval-section {
+                margin-top: 2rem;
+            }
+
+            .eval-box {
+                background-color: white;
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                margin-bottom: 1.5rem;
+                box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.08);
+            }
+
+            .eval-title {
+                font-weight: 600;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .level-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .level-item {
+                background-color: #f8f9fa;
+                padding: 1.2rem;
+                border-radius: var(--border-radius);
+                border-left: 4px solid;
+                transition: var(--transition);
+            }
+
+            .level-item:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.08);
+            }
+
+            .level-a {
+                border-left-color: #4361ee;
+            }
+            .level-b {
+                border-left-color: #3a0ca3;
+            }
+            .level-c {
+                border-left-color: #7209b7;
+            }
+            .level-d {
+                border-left-color: #f72585;
+            }
+            .level-e {
+                border-left-color: #4cc9f0;
+            }
+
+            .level-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 0.8rem;
+            }
+
+            .level-label {
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+
+            .level-a .level-label {
+                color: #4361ee;
+            }
+            .level-b .level-label {
+                color: #3a0ca3;
+            }
+            .level-c .level-label {
+                color: #7209b7;
+            }
+            .level-d .level-label {
+                color: #f72585;
+            }
+            .level-e .level-label {
+                color: #4cc9f0;
+            }
+
+            .level-meta {
+                font-size: 0.8rem;
+                color: var(--gray);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .level-content {
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+
+            .eval-tools {
+                margin-top: 1.5rem;
+            }
+
+            .tool-list {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+
+            .tool-item {
+                background-color: white;
+                border: 1px solid var(--gray-light);
+                border-radius: var(--border-radius);
+                overflow: hidden;
+                transition: var(--transition);
+            }
+
+            .tool-item:hover {
+                transform: translateY(-3px);
+                box-shadow: var(--box-shadow);
+            }
+
+            .tool-header {
+                padding: 0.8rem;
+                background-color: var(--light);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .tool-type {
+                font-size: 0.8rem;
+                background-color: var(--primary);
+                color: white;
+                padding: 0.2rem 0.5rem;
+                border-radius: 4px;
+            }
+
+            .tool-level {
+                font-size: 0.8rem;
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .tool-body {
+                padding: 1rem;
+            }
+
+            .tool-title {
+                font-weight: 500;
+                margin-bottom: 0.5rem;
+                font-size: 0.95rem;
+            }
+
+            .tool-meta {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                font-size: 0.8rem;
+                color: var(--gray);
+                margin-bottom: 0.5rem;
+            }
+
+            .tool-preview {
+                margin-top: 0.8rem;
+                color: var(--primary);
+                font-size: 0.9rem;
+                text-align: right;
+                cursor: pointer;
+            }
+
+            .visualization {
+                margin-top: 2rem;
+            }
+
+            .viz-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+
+            .viz-tools {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .viz-tool {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+                background-color: var(--light);
+                border-radius: 4px;
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .viz-tool:hover,
+            .viz-tool.active {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .viz-container {
+                background-color: white;
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                min-height: 400px;
+                position: relative;
+                box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.08);
+            }
+
+            .viz-loading {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(255, 255, 255, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                gap: 1rem;
+                display: none;
+            }
+
+            .viz-loading-text {
+                font-size: 0.9rem;
+                color: var(--gray);
+            }
+
+            .viz-placeholder {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.6rem 1.2rem;
+                background-color: var(--primary);
+                color: white;
+                border: none;
+                border-radius: var(--border-radius);
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 0.9rem;
+                text-align: center;
+                text-decoration: none;
+            }
+
+            .btn:hover {
+                background-color: var(--secondary);
+            }
+
+            .btn-outline {
+                background-color: transparent;
+                border: 1px solid var(--primary);
+                color: var(--primary);
+            }
+
+            .btn-outline:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+
+            .btn-secondary {
+                background-color: var(--gray-light);
+                color: var(--dark);
+            }
+
+            .btn-secondary:hover {
+                background-color: var(--gray);
+                color: white;
+            }
+
+            .btn-sm {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .flex-center {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .btn-group {
+                display: flex;
+                gap: 1rem;
+                margin-top: 1.5rem;
+            }
+
+            .tooltip {
+                position: relative;
+                display: inline-block;
+            }
+
+            .tooltip .tooltip-text {
+                visibility: hidden;
+                width: 120px;
+                background-color: var(--dark);
+                color: #fff;
+                text-align: center;
+                border-radius: 6px;
+                padding: 5px;
+                position: absolute;
+                z-index: 1;
+                bottom: 125%;
+                left: 50%;
+                transform: translateX(-50%);
+                opacity: 0;
+                transition: opacity 0.3s;
+                font-size: 0.8rem;
+            }
+
+            .tooltip:hover .tooltip-text {
+                visibility: visible;
+                opacity: 1;
+            }
+
+            /* 반응형 조정 */
+            @media (max-width: 992px) {
+                .dashboard {
+                    grid-template-columns: 1fr;
+                }
+
+                .search-box {
+                    position: static;
+                }
+
+                .tab-header {
+                    overflow-x: auto;
+                    white-space: nowrap;
+                }
+
+                .tab {
+                    flex-shrink: 0;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="header-container">
+                <h1>수학 교육과정 네비게이터</h1>
+                <div class="user-nav">
+                    <button class="btn btn-sm btn-outline">
+                        <i class="fas fa-plus"></i> 새 수업 만들기
+                    </button>
+                    <div class="user-avatar">K</div>
+                </div>
+            </div>
+        </header>
+        <main>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="#"><i class="fas fa-home"></i> 홈</a>
+                </li>
+                <li><a href="#">초등학교</a></li>
+                <li><a href="#">1-2학년군</a></li>
+                <li class="active">수와 연산</li>
+            </ul>
+
+            <div class="dashboard">
+                <!-- 좌측 검색 및 필터 영역 -->
+                <div class="sidebar">
+                    <div class="search-box">
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input
+                                type="text"
+                                class="search-input"
+                                placeholder="성취기준, 핵심 아이디어, 용어 검색..."
+                            />
+                        </div>
+
+                        <div class="filter-section">
+                            <div class="filter-header">
+                                <div class="filter-title">
+                                    <i class="fas fa-graduation-cap"></i> 학년군
+                                </div>
+                                <div class="filter-reset">초기화</div>
+                            </div>
+                            <div class="filter-options">
+                                <div class="filter-option active">
+                                    1-2학년 <span class="count">(24)</span>
+                                </div>
+                                <div class="filter-option">
+                                    3-4학년 <span class="count">(32)</span>
+                                </div>
+                                <div class="filter-option">
+                                    5-6학년 <span class="count">(28)</span>
+                                </div>
+                                <div class="filter-option">
+                                    7-9학년 <span class="count">(42)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-section">
+                            <div class="filter-header">
+                                <div class="filter-title">
+                                    <i class="fas fa-th-large"></i> 영역
+                                </div>
+                                <div class="filter-reset">초기화</div>
+                            </div>
+                            <div class="filter-options">
+                                <div class="filter-option active">
+                                    수와 연산 <span class="count">(38)</span>
+                                </div>
+                                <div class="filter-option">
+                                    변화와 관계 <span class="count">(32)</span>
+                                </div>
+                                <div class="filter-option">
+                                    도형과 측정 <span class="count">(34)</span>
+                                </div>
+                                <div class="filter-option">
+                                    자료와 가능성
+                                    <span class="count">(22)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-section">
+                            <div class="filter-header">
+                                <div class="filter-title">
+                                    <i class="fas fa-brain"></i> 교과 역량
+                                </div>
+                                <div class="filter-reset">초기화</div>
+                            </div>
+                            <div class="filter-options">
+                                <div class="filter-option">
+                                    문제해결 <span class="count">(48)</span>
+                                </div>
+                                <div class="filter-option">
+                                    추론 <span class="count">(36)</span>
+                                </div>
+                                <div class="filter-option">
+                                    의사소통 <span class="count">(42)</span>
+                                </div>
+                                <div class="filter-option">
+                                    연결 <span class="count">(30)</span>
+                                </div>
+                                <div class="filter-option">
+                                    정보처리 <span class="count">(25)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recently-viewed">
+                        <div class="filter-title" style="margin-bottom: 1rem">
+                            <i class="fas fa-history"></i> 최근 조회한 항목
+                        </div>
+                        <div class="recently-item">
+                            <div class="recently-item-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="recently-item-content">
+                                <div class="recently-item-title">2수01-01</div>
+                                <div class="recently-item-subtitle">
+                                    수와 연산 | 1-2학년군
+                                </div>
+                            </div>
+                        </div>
+                        <div class="recently-item">
+                            <div class="recently-item-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="recently-item-content">
+                                <div class="recently-item-title">2수01-02</div>
+                                <div class="recently-item-subtitle">
+                                    수와 연산 | 1-2학년군
+                                </div>
+                            </div>
+                        </div>
+                        <div class="recently-item">
+                            <div class="recently-item-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <div class="recently-item-content">
+                                <div class="recently-item-title">CI0101</div>
+                                <div class="recently-item-subtitle">
+                                    핵심 아이디어 | 수와 연산
+                                </div>
+                            </div>
+                        </div>
+                        <div class="recently-item">
+                            <div class="recently-item-icon">
+                                <i class="fas fa-puzzle-piece"></i>
+                            </div>
+                            <div class="recently-item-content">
+                                <div class="recently-item-title">
+                                    네 자리 이하의 수
+                                </div>
+                                <div class="recently-item-subtitle">
+                                    내용 요소 | 1-2학년군
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 우측 콘텐츠 표시 영역 -->
+                <div class="content-display">
+                    <div class="tab-header">
+                        <div class="tab active">
+                            <i class="fas fa-list-alt"></i> 성취기준
+                        </div>
+                        <div class="tab">
+                            <i class="fas fa-lightbulb"></i> 핵심 아이디어
+                        </div>
+                        <div class="tab">
+                            <i class="fas fa-puzzle-piece"></i> 내용 요소
+                        </div>
+                        <div class="tab">
+                            <i class="fas fa-project-diagram"></i> 지식맵
+                        </div>
+                        <div class="tab">
+                            <i class="fas fa-clipboard-check"></i> 평가 도구
+                        </div>
+                        <div class="tab">
+                            <i class="fas fa-chalkboard-teacher"></i> 교수·학습
+                            자료
+                        </div>
+                    </div>
+
+                    <div class="tab-content">
+                        <div class="std-card">
+                            <div class="std-header">
+                                <div class="std-id-container">
+                                    <div class="std-id">2수01-01</div>
+                                    <div class="std-grade">
+                                        <div class="std-grade-dot"></div>
+                                        1-2학년군
+                                    </div>
+                                </div>
+                                <div class="std-actions">
+                                    <div class="std-action-btn tooltip">
+                                        <i class="fas fa-bookmark"></i>
+                                        <span class="tooltip-text">북마크</span>
+                                    </div>
+                                    <div class="std-action-btn tooltip">
+                                        <i class="fas fa-share-alt"></i>
+                                        <span class="tooltip-text">공유</span>
+                                    </div>
+                                    <div class="std-action-btn tooltip">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                        <span class="tooltip-text"
+                                            >더 보기</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="std-content">
+                                수의 필요성을 인식하면서 0과 100까지의 수 개념을
+                                이해하고, 수를 세고 읽고 쓸 수 있다.
+                            </div>
+                            <div class="chip-container">
+                                <div class="chip domain">
+                                    <i class="fas fa-th-large"></i> 수와 연산
+                                </div>
+                                <div class="chip competency">
+                                    <i class="fas fa-lightbulb"></i> 문제해결
+                                </div>
+                                <div class="chip competency">
+                                    <i class="fas fa-comments"></i> 의사소통
+                                </div>
+                            </div>
+
+                            <div class="related-section">
+                                <div class="related-header">
+                                    <div class="related-title">
+                                        <i class="fas fa-lightbulb"></i> 관련
+                                        핵심 아이디어
+                                    </div>
+                                    <div class="related-actions">
+                                        <button
+                                            class="btn btn-sm btn-secondary"
+                                        >
+                                            <i
+                                                class="fas fa-expand-arrows-alt"
+                                            ></i>
+                                            확장
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="core-idea-box">
+                                    <div class="core-idea-title">
+                                        <i class="fas fa-lightbulb"></i> CI0101
+                                    </div>
+                                    <div class="core-idea-content">
+                                        사물의 양은 자연수, 분수, 소수 등으로
+                                        표현되며, 수는 자연수에서 정수, 유리수,
+                                        실수로 확장된다.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="related-section">
+                                <div class="related-header">
+                                    <div class="related-title">
+                                        <i class="fas fa-puzzle-piece"></i> 관련
+                                        내용 요소
+                                    </div>
+                                    <div class="related-actions">
+                                        <button
+                                            class="btn btn-sm btn-secondary"
+                                        >
+                                            <i class="fas fa-sort"></i> 범주별
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="knowledge-grid">
+                                    <div class="knowledge-item knowledge">
+                                        <div class="category-label">
+                                            <i class="fas fa-book"></i>
+                                            지식/이해
+                                        </div>
+                                        <div class="knowledge-content">
+                                            네 자리 이하의 수
+                                        </div>
+                                    </div>
+                                    <div class="knowledge-item process">
+                                        <div class="category-label">
+                                            <i class="fas fa-cogs"></i>
+                                            과정/기능
+                                        </div>
+                                        <div class="knowledge-content">
+                                            수를 세고 읽고 쓰기
+                                        </div>
+                                    </div>
+                                    <div class="knowledge-item value">
+                                        <div class="category-label">
+                                            <i class="fas fa-heart"></i>
+                                            가치/태도
+                                        </div>
+                                        <div class="knowledge-content">
+                                            자연수, 분수, 소수의 필요성 인식
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="related-section">
+                                <div class="related-header">
+                                    <div class="related-title">
+                                        <i class="fas fa-tags"></i> 관련 용어 및
+                                        기호
+                                    </div>
+                                    <div class="related-actions">
+                                        <button
+                                            class="btn btn-sm btn-secondary"
+                                        >
+                                            <i class="fas fa-sort"></i> 분류별
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="term-group">
+                                    <div class="term-group-title">용어</div>
+                                    <div class="term-container">
+                                        <div class="chip term">
+                                            <i class="fas fa-tag"></i> 덧셈
+                                        </div>
+                                        <div class="chip term">
+                                            <i class="fas fa-tag"></i> 뺄셈
+                                        </div>
+                                        <div class="chip term">
+                                            <i class="fas fa-tag"></i> 곱셈
+                                        </div>
+                                        <div class="chip term">
+                                            <i class="fas fa-tag"></i> 짝수
+                                        </div>
+                                        <div class="chip term">
+                                            <i class="fas fa-tag"></i> 홀수
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="term-group">
+                                    <div class="term-group-title">기호</div>
+                                    <div class="term-container">
+                                        <div class="chip term">
+                                            <i class="fas fa-tag"></i> +
+                                        </div>
+                                        <div class="chip term">
+                                            <i class="fas fa-tag"></i> -
+                                        </div>
+                                        <div class="chip term">
+                                            <i class="fas fa-tag"></i> ×
+                                        </div>
+                                        <div class="chip term">
+                                            <i class="fas fa-tag"></i> =
+                                        </div>
+                                        <div class="chip term">
+                                            <i class="fas fa-tag"></i>
+                                        </div>
+                                        <div class="chip term">
+                                            <i class="fas fa-tag"></i> >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="related-section">
+                                <div class="related-header">
+                                    <div class="related-title">
+                                        <i class="fas fa-sitemap"></i> 선수·후속
+                                        성취기준
+                                    </div>
+                                </div>
+                                <div class="level-grid">
+                                    <div
+                                        class="core-idea-box"
+                                        style="margin-bottom: 0"
+                                    >
+                                        <div
+                                            class="core-idea-title"
+                                            style="color: #f72585"
+                                        >
+                                            <i class="fas fa-arrow-up"></i>
+                                            선수학습
+                                        </div>
+                                        <div class="core-idea-content">
+                                            별도의 선수학습 성취기준 없음 (최초
+                                            도입 개념)
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="core-idea-box"
+                                        style="margin-bottom: 0"
+                                    >
+                                        <div
+                                            class="core-idea-title"
+                                            style="color: #4cc9f0"
+                                        >
+                                            <i class="fas fa-arrow-down"></i>
+                                            후속학습
+                                        </div>
+                                        <div class="core-idea-content">
+                                            2수01-02: 일, 십, 백, 천의 자릿값과
+                                            위치적 기수법을 이해하고, 네 자리
+                                            이하의 수를 읽고 쓸 수 있다.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="eval-section">
+                                <div class="related-header">
+                                    <div class="related-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        성취수준 및 평가
+                                    </div>
+                                    <div class="related-actions">
+                                        <button
+                                            class="btn btn-sm btn-secondary"
+                                        >
+                                            <i class="fas fa-filter"></i> 필터
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="level-grid">
+                                    <div class="level-item level-a">
+                                        <div class="level-header">
+                                            <div class="level-label">
+                                                <i class="fas fa-award"></i> A
+                                                수준
+                                            </div>
+                                            <div class="level-meta">
+                                                <i
+                                                    class="fas fa-chart-line"
+                                                ></i>
+                                                상위 10%
+                                            </div>
+                                        </div>
+                                        <div class="level-content">
+                                            수의 필요성을 다양한 상황에서
+                                            설명하고, 0과 100까지의 수 개념을
+                                            깊이 이해하며, 수를 능숙하게 세고
+                                            읽고 쓸 수 있다.
+                                        </div>
+                                    </div>
+                                    <div class="level-item level-b">
+                                        <div class="level-header">
+                                            <div class="level-label">
+                                                <i class="fas fa-award"></i> B
+                                                수준
+                                            </div>
+                                            <div class="level-meta">
+                                                <i
+                                                    class="fas fa-chart-line"
+                                                ></i>
+                                                상위 30%
+                                            </div>
+                                        </div>
+                                        <div class="level-content">
+                                            수의 필요성을 인식하고, 0과
+                                            100까지의 수 개념을 이해하며, 수를
+                                            정확하게 세고 읽고 쓸 수 있다.
+                                        </div>
+                                    </div>
+                                    <div class="level-item level-c">
+                                        <div class="level-header">
+                                            <div class="level-label">
+                                                <i class="fas fa-award"></i> C
+                                                수준
+                                            </div>
+                                            <div class="level-meta">
+                                                <i
+                                                    class="fas fa-chart-line"
+                                                ></i>
+                                                평균
+                                            </div>
+                                        </div>
+                                        <div class="level-content">
+                                            0과 100까지의 수 개념을 이해하고,
+                                            수를 세고 읽고 쓸 수 있다.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="eval-tools">
+                                    <div
+                                        class="related-title"
+                                        style="
+                                            margin-top: 1.5rem;
+                                            margin-bottom: 1rem;
+                                        "
+                                    >
+                                        <i class="fas fa-tasks"></i> 평가 도구
+                                        (5)
+                                    </div>
+                                    <div class="tool-list">
+                                        <div class="tool-item">
+                                            <div class="tool-header">
+                                                <div class="tool-type">
+                                                    지필평가
+                                                </div>
+                                                <div class="tool-level">
+                                                    B 수준
+                                                </div>
+                                            </div>
+                                            <div class="tool-body">
+                                                <div class="tool-title">
+                                                    0~100까지 수 개념 이해 평가
+                                                </div>
+                                                <div class="tool-meta">
+                                                    <span
+                                                        ><i
+                                                            class="fas fa-tasks"
+                                                        ></i>
+                                                        객관식</span
+                                                    >
+                                                    <span
+                                                        ><i
+                                                            class="fas fa-clock"
+                                                        ></i>
+                                                        5분</span
+                                                    >
+                                                </div>
+                                                <div class="tool-preview">
+                                                    <i class="fas fa-eye"></i>
+                                                    미리보기
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tool-item">
+                                            <div class="tool-header">
+                                                <div class="tool-type">
+                                                    수행평가
+                                                </div>
+                                                <div class="tool-level">
+                                                    A 수준
+                                                </div>
+                                            </div>
+                                            <div class="tool-body">
+                                                <div class="tool-title">
+                                                    수의 필요성 설명하기
+                                                </div>
+                                                <div class="tool-meta">
+                                                    <span
+                                                        ><i
+                                                            class="fas fa-edit"
+                                                        ></i>
+                                                        서술형</span
+                                                    >
+                                                    <span
+                                                        ><i
+                                                            class="fas fa-clock"
+                                                        ></i>
+                                                        15분</span
+                                                    >
+                                                </div>
+                                                <div class="tool-preview">
+                                                    <i class="fas fa-eye"></i>
+                                                    미리보기
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tool-item">
+                                            <div class="tool-header">
+                                                <div class="tool-type">
+                                                    형성평가
+                                                </div>
+                                                <div class="tool-level">
+                                                    C 수준
+                                                </div>
+                                            </div>
+                                            <div class="tool-body">
+                                                <div class="tool-title">
+                                                    수 읽고 쓰기 연습
+                                                </div>
+                                                <div class="tool-meta">
+                                                    <span
+                                                        ><i
+                                                            class="fas fa-list"
+                                                        ></i>
+                                                        단답형</span
+                                                    >
+                                                    <span
+                                                        ><i
+                                                            class="fas fa-clock"
+                                                        ></i>
+                                                        10분</span
+                                                    >
+                                                </div>
+                                                <div class="tool-preview">
+                                                    <i class="fas fa-eye"></i>
+                                                    미리보기
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="btn-group">
+                                <a href="#" class="btn">
+                                    <i class="fas fa-plus-circle"></i> 수업
+                                    계획에 추가
+                                </a>
+                                <a href="#" class="btn btn-outline">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                    교수·학습 자료
+                                </a>
+                                <a href="#" class="btn btn-secondary">
+                                    <i class="fas fa-print"></i> 인쇄
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="visualization">
+                            <div class="viz-header">
+                                <h2>
+                                    <i class="fas fa-project-diagram"></i> 관련
+                                    개념 지식맵
+                                </h2>
+                                <div class="viz-tools">
+                                    <div class="viz-tool active">기본 보기</div>
+                                    <div class="viz-tool">확장 보기</div>
+                                    <div class="viz-tool">역량 중심</div>
+                                    <div class="viz-tool">내용 요소 중심</div>
+                                </div>
+                            </div>
+                            <div class="viz-container">
+                                <img
+                                    class="viz-placeholder"
+                                    src="https://user-images.githubusercontent.com/6840abb0-9df3-43e7-bc5e-be3a49ab8826"
+                                    alt="지식맵 시각화"
+                                />
+                                <div class="viz-loading">
+                                    <i class="fas fa-spinner fa-spin fa-3x"></i>
+                                    <div class="viz-loading-text">
+                                        지식맵을 생성하는 중입니다...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            // 실제 구현에서는 여기에 필요한 JavaScript 코드를 추가할 수 있습니다
+            // 예: 탭 전환, 필터링, 지식맵 시각화 등
+        </script>
+    </body>
+</html>
