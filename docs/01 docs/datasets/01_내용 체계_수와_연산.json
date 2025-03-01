@@ -1,0 +1,354 @@
+{
+    "domain": {
+        "id": "D01",
+        "name": "수와 연산",
+        "code": "01",
+        "description": "수와 연산 영역은 초·중학교에서 다루는 수학적 대상과 기본적인 개념을 드러내는 영역으로..."
+    },
+    "coreIdea": {
+        "id": "CI0101",
+        "domainId": "D01",
+        "content": "· 사물의 양은 자연수, 분수, 소수 등으로 표현되며, 수는 자연수에서 정수, 유리수, 실수로 확장된다.\n· 사칙계산은 자연수에 대해 정의되며 정수, 유리수, 실수의 사칙계산으로 확장되고 이때 연산의 성질이 일관되게 성립한다.\n· 수와 사칙계산은 수학 학습의 기본이 되며, 실생활 문제를 포함한 다양한 문제를 해결하는 데 유용하게 활용된다."
+    },
+    "contentElements": [
+        {
+            "id": "CE010101",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "KU",
+            "content": "네 자리 이하의 수"
+        },
+        {
+            "id": "CE010102",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "KU",
+            "content": "두 자리 수 범위의 덧셈과 뺄셈"
+        },
+        {
+            "id": "CE010103",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "KU",
+            "content": "한 자리 수의 곱셈"
+        },
+        {
+            "id": "CE010104",
+            "domainId": "D01",
+            "gradeGroupId": "3-4",
+            "categoryId": "KU",
+            "content": "다섯 자리 이상의 수"
+        },
+        {
+            "id": "CE010105",
+            "domainId": "D01",
+            "gradeGroupId": "3-4",
+            "categoryId": "KU",
+            "content": "분수"
+        },
+        {
+            "id": "CE010106",
+            "domainId": "D01",
+            "gradeGroupId": "3-4",
+            "categoryId": "KU",
+            "content": "소수"
+        },
+        {
+            "id": "CE010107",
+            "domainId": "D01",
+            "gradeGroupId": "3-4",
+            "categoryId": "KU",
+            "content": "세 자리 수의 덧셈과 뺄셈"
+        },
+        {
+            "id": "CE010108",
+            "domainId": "D01",
+            "gradeGroupId": "3-4",
+            "categoryId": "KU",
+            "content": "자연수의 곱셈과 나눗셈"
+        },
+        {
+            "id": "CE010109",
+            "domainId": "D01",
+            "gradeGroupId": "3-4",
+            "categoryId": "KU",
+            "content": "분모가 같은 분수의 덧셈과 뺄셈"
+        },
+        {
+            "id": "CE010110",
+            "domainId": "D01",
+            "gradeGroupId": "3-4",
+            "categoryId": "KU",
+            "content": "소수의 덧셈과 뺄셈"
+        },
+        {
+            "id": "CE010111",
+            "domainId": "D01",
+            "gradeGroupId": "5-6",
+            "categoryId": "KU",
+            "content": "약수와 배수"
+        },
+        {
+            "id": "CE010112",
+            "domainId": "D01",
+            "gradeGroupId": "5-6",
+            "categoryId": "KU",
+            "content": "수의 범위와 올림, 버림, 반올림"
+        },
+        {
+            "id": "CE010113",
+            "domainId": "D01",
+            "gradeGroupId": "5-6",
+            "categoryId": "KU",
+            "content": "자연수의 혼합 계산"
+        },
+        {
+            "id": "CE010114",
+            "domainId": "D01",
+            "gradeGroupId": "5-6",
+            "categoryId": "KU",
+            "content": "분모가 다른 분수의 덧셈과 뺄셈"
+        },
+        {
+            "id": "CE010115",
+            "domainId": "D01",
+            "gradeGroupId": "5-6",
+            "categoryId": "KU",
+            "content": "분수의 곱셈과 나눗셈"
+        },
+        {
+            "id": "CE010116",
+            "domainId": "D01",
+            "gradeGroupId": "5-6",
+            "categoryId": "KU",
+            "content": "소수의 곱셈과 나눗셈"
+        },
+        {
+            "id": "CE010117",
+            "domainId": "D01",
+            "gradeGroupId": "7-9",
+            "categoryId": "KU",
+            "content": "소인수분해"
+        },
+        {
+            "id": "CE010118",
+            "domainId": "D01",
+            "gradeGroupId": "7-9",
+            "categoryId": "KU",
+            "content": "정수와 유리수"
+        },
+        {
+            "id": "CE010119",
+            "domainId": "D01",
+            "gradeGroupId": "7-9",
+            "categoryId": "KU",
+            "content": "유리수와 순환소수"
+        },
+        {
+            "id": "CE010120",
+            "domainId": "D01",
+            "gradeGroupId": "7-9",
+            "categoryId": "KU",
+            "content": "제곱근과 실수"
+        },
+        {
+            "id": "CE010121",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "PF",
+            "content": "자연수, 분수, 소수 등 수 관련 개념과 원리를 탐구하기"
+        },
+        {
+            "id": "CE010122",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "PF",
+            "content": "수를 세고 읽고 쓰기"
+        },
+        {
+            "id": "CE010123",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "PF",
+            "content": "자연수, 분수, 소수의 크기를 비교하고 그 방법을 설명하기"
+        },
+        {
+            "id": "CE010124",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "PF",
+            "content": "사칙계산의 의미와 계산 원리를 탐구하고 계산하기"
+        },
+        {
+            "id": "CE010125",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "PF",
+            "content": "수 감각과 연산 감각 기르기"
+        },
+        {
+            "id": "CE010126",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "PF",
+            "content": "연산 사이의 관계, 분수와 소수의 관계를 탐구하기"
+        },
+        {
+            "id": "CE010127",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "PF",
+            "content": "수의 범위와 올림, 버림, 반올림한 어림값을 실생활과 연결하기"
+        },
+        {
+            "id": "CE010128",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "PF",
+            "content": "자연수, 분수, 소수, 사칙계산을 실생활 및 타 교과와 연결하여 문제해결하기"
+        },
+        {
+            "id": "CE010129",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "PF",
+            "content": "최대공약수와 최소공배수 구하기"
+        },
+        {
+            "id": "CE010130",
+            "domainId": "D01",
+            "gradeGroupId": "7-9",
+            "categoryId": "PF",
+            "content": "정수, 유리수, 실수의 대소 관계 판단하기"
+        },
+        {
+            "id": "CE010131",
+            "domainId": "D01",
+            "gradeGroupId": "7-9",
+            "categoryId": "PF",
+            "content": "정수, 유리수, 근호를 포함한 식의 사칙계산의 원리를 탐구하고 계산하기"
+        },
+        {
+            "id": "CE010132",
+            "domainId": "D01",
+            "gradeGroupId": "7-9",
+            "categoryId": "PF",
+            "content": "유리수와 순환소수의 관계 설명하기"
+        },
+        {
+            "id": "CE010133",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "VA",
+            "content": "자연수, 분수, 소수의 필요성 인식"
+        },
+        {
+            "id": "CE010134",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "VA",
+            "content": "사칙계산, 어림의 유용성 인식"
+        },
+        {
+            "id": "CE010135",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "VA",
+            "content": "분수 표현의 편리함 인식"
+        },
+        {
+            "id": "CE010136",
+            "domainId": "D01",
+            "gradeGroupId": "1-2",
+            "categoryId": "VA",
+            "content": "수와 연산 관련 문제해결에서 비판적으로 사고하는 태도"
+        },
+        {
+            "id": "CE010137",
+            "domainId": "D01",
+            "gradeGroupId": "7-9",
+            "categoryId": "VA",
+            "content": "음수, 무리수의 필요성 인식"
+        },
+        {
+            "id": "CE010138",
+            "domainId": "D01",
+            "gradeGroupId": "7-9",
+            "categoryId": "VA",
+            "content": "실생활에서 사칙계산의 유용성 인식"
+        },
+        {
+            "id": "CE010139",
+            "domainId": "D01",
+            "gradeGroupId": "7-9",
+            "categoryId": "VA",
+            "content": "수 체계의 논리적 아름다움에 대한 관심"
+        },
+        {
+            "id": "CE010140",
+            "domainId": "D01",
+            "gradeGroupId": "7-9",
+            "categoryId": "VA",
+            "content": "정수와 유리수의 사칙계산의 원리를 이용하는 문제의 풀이 과정과 결과를 반성하는 태도"
+        }
+    ],
+    "contentCategories": [
+        {
+            "id": "KU",
+            "name": "지식·이해"
+        },
+        {
+            "id": "PF",
+            "name": "과정·기능"
+        },
+        {
+            "id": "VA",
+            "name": "가치·태도"
+        }
+    ],
+    "gradeGroups": [
+        {
+            "id": "1-2",
+            "name": "초등학교 1~2학년"
+        },
+        {
+            "id": "3-4",
+            "name": "초등학교 3~4학년"
+        },
+        {
+            "id": "5-6",
+            "name": "초등학교 5~6학년"
+        },
+        {
+            "id": "7-9",
+            "name": "중학교 1~3학년"
+        }
+    ],
+    "relationships": [
+        {
+            "type": "HAS_CORE_IDEA",
+            "sourceNodeId": "D01",
+            "targetNodeId": "CI0101"
+        },
+        {
+            "type": "APPLICABLE_TO",
+            "sourceNodeId": "D01",
+            "targetNodeId": "1-2"
+        },
+        {
+            "type": "APPLICABLE_TO",
+            "sourceNodeId": "D01",
+            "targetNodeId": "3-4"
+        },
+        {
+            "type": "APPLICABLE_TO",
+            "sourceNodeId": "D01",
+            "targetNodeId": "5-6"
+        },
+        {
+            "type": "APPLICABLE_TO",
+            "sourceNodeId": "D01",
+            "targetNodeId": "7-9"
+        }
+    ]
+}
